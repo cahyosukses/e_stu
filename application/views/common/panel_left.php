@@ -25,6 +25,7 @@
 			<li><a href="<?php echo base_url('calendar'); ?>"><span class="icon-calendar"></span>Calendar</a></li>
 			<li><a href="<?php echo base_url('fee'); ?>"><span class="icon-credit-card"></span>Fee</a></li>
 			<li><a href="<?php echo base_url('email'); ?>"><span class="icon-envelope"></span>Email</a></li>
+			<li><a href="<?php echo base_url('report_card'); ?>"><span class="icon-envelope"></span>Report Card</a></li>
 			<li><a href="<?php echo base_url('sms'); ?>"><span class="icon-mobile-phone"></span>SMS</a></li>
 			<li class="lp-dropdown">
 				<a href="#" class="lp-dropdown-toggle" id="extras-dropdown"><span class="icon-th-large"></span>Master</a>

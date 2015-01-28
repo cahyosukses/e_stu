@@ -1,16 +1,9 @@
 <?php
-	// data
-	$class_level_id = (isset($_GET['class_level_id'])) ? $_GET['class_level_id'] : 0;
-	if (empty($class_level_id)) {
-		exit;
-	}
-	
 	// user
 	$user = $this->user_model->get_session();
 	
 	// page
 	$array_page['user'] = $user;
-	$array_page['class_level_id'] = $class_level_id;
 	$array_page['USER_TYPE_PARENT'] = USER_TYPE_PARENT;
 	$array_page['USER_TYPE_TEACHER'] = USER_TYPE_TEACHER;
 	$array_page['USER_TYPE_ADMINISTRATOR'] = USER_TYPE_ADMINISTRATOR;
@@ -56,11 +49,11 @@
 	
 	<section class="container">
 		<section class="row-fluid">
-			<h3 class="box-header">Finalize</h3>
+			<h3 class="box-header">Report Card</h3>
 			
 			<div class="box-grid">
 				<div class="box">
-					<h4 class="center-title">Finalize</h4>
+					<h4 class="center-title">Report Card</h4>
 					<table class="table table-striped" id="grade-finalize-grid">
 						<thead>
 							<tr>
@@ -97,11 +90,8 @@ $(document).ready(function() {
 	// grid
 	var param = {
 		id: 'grade-finalize-grid',
-		source: 'grade_finalize/grid', aaSorting: [[ 0, "ASC" ]], bFilter: false, bLengthChange: false,
+		source: 'grade_finalize/grid', aaSorting: [[ 0, "ASC" ]],
 		column: [ { }, { sClass: 'center' }, { sClass: 'center' }, { sClass: 'center' }, { sClass: 'center' }, { bSortable: false, sClass: 'center' } ],
-		fnServerParams: function(aoData) {
-			aoData.push( { name: 'class_level_id', value: page.data.class_level_id } );
-		},
 		callback: function() {
 			$('#grade-finalize-grid .btn-edit').click(function() {
 				var raw_record = $(this).siblings('.hide').text();

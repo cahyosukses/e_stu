@@ -1,14 +1,15 @@
 <?php
 
-class grade_finalize extends SE_Login_Controller {
+class report_card extends SE_Login_Controller {
     function __construct() {
         parent::__construct();
     }
     
     function index() {
-		$this->load->view( 'grade_finalize' );
+		$this->load->view( 'report_card' );
     }
 	
+	/*
 	function grid() {
 		$_POST['default_value'] = false;
 		$_POST['is_edit_only'] = 1;
@@ -41,4 +42,5 @@ class grade_finalize extends SE_Login_Controller {
 		
 		echo json_encode($result);
 	}
+	/*	*/
 }

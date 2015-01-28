@@ -2,15 +2,18 @@ Report Card Feature
 This will be touch all three users - Teachers, Parents and Administrator
 
 1. In the Task area, there will be a finalize button for each class the teachers teaches
+- done
 
 2. Once you click on the button,
 it will redirect them to a new page (not a modal) showing the list of students, the entire list not just the first 10,
 The lit will have a few columns - The student Name, The percentage and a control column, with a link to add comments
 - http://jafariaschool.org/student/grade_finalize
+- done
 
 3. When you click on the add comments, a modal pops up with 2 columns
 - Good and Bad
 - A teacher can add as many good comments and as many bad comments as they want.
+- done
 
 1. Good comments
 1. Great Work
@@ -20,6 +23,7 @@ The lit will have a few columns - The student Name, The percentage and a control
 5. Highly motivated
 6. Contributes intelligently to class
 7. Works well in group activities
+- done
 
 2. Bad Comments
 8. Appears disorganized
@@ -29,11 +33,13 @@ The lit will have a few columns - The student Name, The percentage and a control
 12. Inconsistent effort
 13. Unacceptable behavior
 14. Difficulty in understanding subject matte
+- done
 
 4. On the Finalize page
 There will be save and finalize button and a save and back button.
 and once you click on the save and finalize button that you will go back to the task page
 and instead of the finalize button there will be a text saying "Grades were finalized for this class on <Date and Time Stamp>"
+- later
 
 5. There will be a new page for the administrator login which will be called report cards.
 - http://jafariaschool.org/student/report_card
@@ -75,7 +81,16 @@ feedback.
 
 
 application/controllers/grade_finalize.php
+application/controllers/report_card.php
 application/models/student_model.php
-application/views/grade_finalize.php
+application/views/common/panel_left.php
 application/views/task.php
+application/views/grade_finalize.php
+application/views/report_card.php
+static/js/public_function.js
+note.txt
 
+
+
+update sql :
+	- ALTER TABLE `students` ADD `comment_good` LONGTEXT NOT NULL , ADD `comment_bad` LONGTEXT NOT NULL ;

@@ -38,8 +38,12 @@ var Func = {
 		var dt = Func.datatable(param);
 		/*	*/
 		var cnt_id = '#' + p.id;
+		p.bFilter = (typeof(p.bFilter) == 'undefined') ? true : p.bFilter;
+		p.bLengthChange = (typeof(p.bLengthChange) == 'undefined') ? true : p.bLengthChange;
 		
 		var dt_param = {
+			"bFilter": p.bFilter,
+			"bLengthChange": p.bLengthChange,
 			"aoColumns": p.column,
 			"sAjaxSource": p.source,
 			"bProcessing": true, "bServerSide": true, "sServerMethod": "POST", "sPaginationType": "full_numbers",

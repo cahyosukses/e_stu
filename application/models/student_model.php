@@ -6,7 +6,7 @@ class student_model extends CI_Model {
 		
         $this->field = array(
 			's_id', 's_parent_id', 's_status', 's_gender', 's_previous', 's_age', 's_last_level', 's_quran_level', 's_dob', 's_name',
-			'quran_level_id', 'class_level_id'
+			'quran_level_id', 'class_level_id', 'comment_good', 'comment_bad'
 		);
     }
 
@@ -112,6 +112,7 @@ class student_model extends CI_Model {
 	
     function get_grade($param = array()) {
 		// param
+		$param['default_value'] = (isset($param['default_value'])) ? $param['default_value'] : true;
 		$string_student = (isset($param['student_id'])) ? "AND _student.s_id = '".$param['student_id']."'" : '';
 		$string_quran_level = (isset($param['quran_level_id'])) ? "AND _student.quran_level_id = '".$param['quran_level_id']."'" : '';
 		$string_class_level = (isset($param['class_level_id'])) ? "AND _student.class_level_id = '".$param['class_level_id']."'" : '';
@@ -172,11 +173,11 @@ class student_model extends CI_Model {
 		$array_student = array();
 		$select_result = mysql_query($select_query) or die(mysql_error());
 		while ( $row = mysql_fetch_assoc( $select_result ) ) {
-			$array_student[] = $this->sync_grade($row, $task_weight);
+			$array_student[] = $this->sync_grade($row, $task_weight, $param);
 		}
 		
 		// set 100 if no task avaliable
-		if (count($array_student) == 0) {
+		if (count($array_student) == 0 && $param['default_value']) {
 			$temp['quran_label'] = 'No task avaliable';
 			$temp['quran_summary'] = 100;
 			$temp['figh_label'] = 'No task avaliable';
@@ -430,7 +431,7 @@ class student_model extends CI_Model {
 		return $row;
 	}
 	
-	function sync_grade($row, $task_weight) {
+	function sync_grade($row, $task_weight, $param = array()) {
 		$row['quran_homework'] = (is_null($row['quran_homework'])) ? 100 : intval($row['quran_homework']);
 		$row['quran_project'] = (is_null($row['quran_project'])) ? 100 : intval($row['quran_project']);
 		$row['quran_test'] = (is_null($row['quran_test'])) ? 100 : intval($row['quran_test']);
@@ -549,6 +550,11 @@ class student_model extends CI_Model {
 			. 'Tareekh '.$row['tareekh_attendance']."%";
 		if ($row['class_level_id'] >= 5) {
 			$row['attendance_label'] .= "\nAqaid ".$row['aqaid_attendance'].'%';
+		}
+		
+		// datatable
+		if (count(@$param['column']) > 0) {
+			$row = dt_view_set($row, $param);
 		}
 		
 		return $row;
