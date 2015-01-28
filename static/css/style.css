@@ -1,0 +1,80 @@
+a { text-decoration: none; }
+.well, .box { padding-bottom: 0; }
+.cursor { cursor: pointer; }
+.center { text-align: center !important; }
+.center-title { padding: 0px; margin: 0px 0px 10px 0px; text-align: center; }
+.visible-column-small { display: none; }
+
+/* header */
+.dropdown a.active { font-weight: bold; }
+.dropdown-menu .divider { border-bottom: 1px solid #666; }
+
+/* modal */
+@media screen and (min-width: 900px) {
+	.modal-big { left: 45%; width: 750px; }
+	.modal-big .control-label { width: 100px; }
+	.modal-big .controls { margin-left: 120px; }
+}
+
+/* font awesome */
+.cursor-font-awesome { padding: 0 5px; font-size: 18px; cursor: pointer; }
+
+/* jquery validate */
+label.error { margin: 5px 0 0 0; color: #b85355; }
+
+/* notify js */
+.notifyjs-corner { margin: 50px 25px 0 0 !important; }
+
+/* typeahead */
+.modal-body{ overflow-y: inherit; }
+.cnt-typeahead span { width: 100%; }
+.cnt-typeahead .empty-message { padding: 0 0 0 15px; }
+.tt-dropdown-menu  { width: 66% !important; }
+
+/* datepicker */
+.datepicker { z-index: 1100; }
+
+/* color */
+.red { color: #e64f3c; }
+
+/* attendance tracker */
+div.more-buttons { position: relative; width: 275px; margin: 0 auto; bottom: 45px; text-align: center; }
+
+
+@media screen and (min-width: 768px) {
+	/* header menu */
+	#main-navbar .nav > li.visible-column-small { display: none; }
+	
+	/* tab */
+	.tab-content .cnt-filter  { padding: 0 0 25px 0; }
+	.tab-content .cnt-filter .filter-title { text-align: right; }
+	
+	/* dashboard tardy */
+	#modal-tardy .form-horizontal .control-group { margin-bottom: 5px; }
+}
+
+/* max width 750px */
+@media screen and (max-width: 768px) {
+	/* global */
+	.visible-column-small { display: block; }
+	
+	/* header menu */
+	#main-navbar .nav > li.dropdown { display: none; }
+	
+	/* tab */
+	.tab-content { overflow: hidden; }
+	
+	/* datatable */
+	.dataTables_length { display: none; }
+	.dataTables_filter { display: none; }
+	.dataTables_info { display: none; }
+	.dataTable .column-small, .table-bordered .column-small { display: none; }
+	.paging_full_numbers > a { display: none; }
+	
+	/* attendance tracker */
+	div.more-buttons { margin: 0; text-align: left; }
+	
+	/* dashboard tardy */
+	#modal-tardy .form-horizontal .control-group { margin-bottom: 3px; }
+}
+
