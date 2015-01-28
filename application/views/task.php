@@ -142,8 +142,9 @@
 						</select>
 					</div>
 					<div class="span4">&nbsp;</div>
-					<div class="span4 center">
+					<div class="span4 center btn-group">
 						<input type="button" class="btn btn-grade-weight" value="Grade Weights" />
+						<input type="button" class="btn btn-finalize" value="Finalize" />
 					</div>
 				</div>
 				<div class="row-fluid">
@@ -699,6 +700,16 @@ $(document).ready(function() {
 					$('#modal-weight').modal('hide');
 				}
 			});
+		});
+		
+		// form grade finalize
+		$('.btn-finalize').click(function() {
+			if (page.is_valid()) {
+				var link_grade = web.base + 'grade_finalize?class_level_id=' + page.get_filter().class_level_id;
+				window.open(link_grade);
+			} else {
+				$.notify("Please select Class Level", "error");
+			}
 		});
 	}
 	else {

@@ -74,4 +74,6 @@ feedback.
 
 
 
-student_model.php
+application/controllers/grade_finalize.php
+application/models/student_model.php
+application/views/grade_finalize.php
