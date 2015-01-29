@@ -705,7 +705,9 @@ $(document).ready(function() {
 		// form grade finalize
 		$('.btn-finalize').click(function() {
 			if (page.is_valid()) {
-				var link_grade = web.base + 'grade_finalize?class_level_id=' + page.get_filter().class_level_id;
+				var link_grade = web.base + 'grade_finalize?class_type_id=' + page.get_filter().class_type;
+				link_grade += (page.get_filter().class_level_id == 0) ? '' : '&class_level_id=' + page.get_filter().class_level_id;
+				link_grade += (page.get_filter().quran_level_id == 0) ? '' : '&quran_level_id=' + page.get_filter().quran_level_id;
 				window.open(link_grade);
 			} else {
 				$.notify("Please select Class Level", "error");

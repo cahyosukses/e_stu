@@ -67,6 +67,7 @@ define('TASK_TYPE',								'task_type');
 define('TASK_CLASS',							'task_class');
 define('TARDY',									'tardy');
 define('TEACHER_CLASS',							'teacher_class');
+define('TEACHER_COMMENT',						'teacher_comment');
 define('USER',									'users');
 define('USER_TYPE',								'user_type');
 define('WEEKLY_CHECKLIST',						'weekly_checklist');

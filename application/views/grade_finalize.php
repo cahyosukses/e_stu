@@ -1,16 +1,17 @@
 <?php
 	// data
+	$class_type_id = (isset($_GET['class_type_id'])) ? $_GET['class_type_id'] : 0;
 	$class_level_id = (isset($_GET['class_level_id'])) ? $_GET['class_level_id'] : 0;
-	if (empty($class_level_id)) {
-		exit;
-	}
+	$quran_level_id = (isset($_GET['quran_level_id'])) ? $_GET['quran_level_id'] : 0;
 	
 	// user
 	$user = $this->user_model->get_session();
 	
 	// page
 	$array_page['user'] = $user;
+	$array_page['class_type_id'] = $class_type_id;
 	$array_page['class_level_id'] = $class_level_id;
+	$array_page['quran_level_id'] = $quran_level_id;
 	$array_page['USER_TYPE_PARENT'] = USER_TYPE_PARENT;
 	$array_page['USER_TYPE_TEACHER'] = USER_TYPE_TEACHER;
 	$array_page['USER_TYPE_ADMINISTRATOR'] = USER_TYPE_ADMINISTRATOR;
@@ -26,7 +27,7 @@
 	
 	<div id="modal-comment" class="modal modal-big hide fade" tabindex="-1" role="dialog" aria-labelledby=" modal-commentLabel" aria-hidden="true">
 		<form class="form-horizontal" style="margin: 0px;">
-			<input type="hidden" name="s_id" value="" />
+			<input type="hidden" name="id" value="" />
 			<input type="hidden" name="action" value="update_comment" />
 			
 			<div class="modal-header">
@@ -34,6 +35,21 @@
 				<h3 id="modal-commentLabel">Update Comment</h3>
 			</div>
 			<div class="modal-body">
+				<table border="1" style="width: 80%; margin: 0 auto 25px;;">
+					<thead>
+						<tr style="text-align: center; font-weight: bold;">
+							<td style="width: 50%;">Good comments</td>
+							<td style="width: 50%;">Bad comments</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1. Great Work<br />2. Outstanding Student<br />3. Good Work Habits<br />4. Very Neat & Accurate work<br />5. Highly motivated<br />6. Contributes intelligently to class<br />7. Works well in group activities</td>
+							<td>8. Appears disorganized<br />9. Quality of Work Declining<br />10. Does not bring Materials<br />11. Does not follow Directions<br />12. Inconsistent effort<br />13. Unacceptable behavior<br />14. Difficulty in understanding subject matter</td>
+						</tr>
+					</tbody>
+				</table>
+				
 				<div class="control-group">
 					<label class="control-label">Good</label>
 					<div class="controls">
@@ -100,7 +116,13 @@ $(document).ready(function() {
 		source: 'grade_finalize/grid', aaSorting: [[ 0, "ASC" ]], bFilter: false, bLengthChange: false,
 		column: [ { }, { sClass: 'center' }, { sClass: 'center' }, { sClass: 'center' }, { sClass: 'center' }, { bSortable: false, sClass: 'center' } ],
 		fnServerParams: function(aoData) {
-			aoData.push( { name: 'class_level_id', value: page.data.class_level_id } );
+			aoData.push( { name: 'class_type_id', value: page.data.class_type_id } );
+			if (page.data.class_level_id != 0) {
+				aoData.push( { name: 'class_level_id', value: page.data.class_level_id } );
+			}
+			if (page.data.quran_level_id != 0) {
+				aoData.push( { name: 'quran_level_id', value: page.data.quran_level_id } );
+			}
 		},
 		callback: function() {
 			$('#grade-finalize-grid .btn-edit').click(function() {
@@ -109,7 +131,7 @@ $(document).ready(function() {
 				
 				Func.ajax({
 					url: web.base + 'grade_finalize/action',
-					param: { action: 'get_student', student_id: record.id },
+					param: { action: 'get_teacher_comment', student_id: record.id, class_type_id: page.data.class_type_id },
 					callback: function(result) {
 						Func.populate({ cnt: '#modal-comment form', record: result });
 						$('#modal-comment').modal();

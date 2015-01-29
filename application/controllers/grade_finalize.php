@@ -34,9 +34,15 @@ class grade_finalize extends SE_Login_Controller {
 		
 		// student
 		if ($action == 'update_comment') {
-			$result = $this->student_model->update($_POST);
-		} else if ($action == 'get_student') {
-			$result = $this->student_model->get_by_id(array( 's_id' => $_POST['student_id'] ));
+			$result = $this->teacher_comment_model->update($_POST);
+		} else if ($action == 'get_teacher_comment') {
+			$result = $this->teacher_comment_model->get_by_id($_POST);
+			
+			// make record exist
+			if (count($result) == 0) {
+				$this->teacher_comment_model->update($_POST);
+				$result = $this->teacher_comment_model->get_by_id($_POST);
+			}
 		}
 		
 		echo json_encode($result);

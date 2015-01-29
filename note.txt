@@ -80,17 +80,23 @@ feedback.
 
 
 
+application/config/autoload.php
+application/config/constants.php
 application/controllers/grade_finalize.php
 application/controllers/report_card.php
 application/models/student_model.php
+application/models/teacher_comment_model.php
 application/views/common/panel_left.php
-application/views/task.php
 application/views/grade_finalize.php
+application/views/task.php
 application/views/report_card.php
 static/js/public_function.js
 note.txt
 
 
 
+
+
 update sql :
-	- ALTER TABLE `students` ADD `comment_good` LONGTEXT NOT NULL , ADD `comment_bad` LONGTEXT NOT NULL ;
+	- CREATE TABLE IF NOT EXISTS `teacher_comment` ( `id` int(11) NOT NULL AUTO_INCREMENT, `student_id` int(11) NOT NULL, `class_type_id` int(11) NOT NULL, `comment` varchar(255) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
