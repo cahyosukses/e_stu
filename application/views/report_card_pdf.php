@@ -1,3 +1,7 @@
+<?php
+	$parent = $this->parents_model->get_by_id(array( 'p_id' => $_POST['parent_id'] ));
+	$array_student = $this->student_model->get_array(array( 's_parent_id' => $action['parent_id'] ));
+?>
 <style>
 .clear {
 	clear: both;
@@ -177,7 +181,7 @@ a {
 	<div class="title">MID-TERM</div>
 	<div class="title">REPORT CARD</div>
 	<div class="title-school">JAFARIA EDUCATION CENTER</div>
-	<div class="name"><?= $parent['father_name'] ?> & <?= $parent['mother_name'] ?></div>
+	<div class="name"><?php echo $parent['p_father_name'].' & '.$parent['p_mother_name']; ?></div>
 	
 	<p class="text">Key: Achievement is graded from A to F. For additional comments, please refer to the following:</p>
 	
@@ -192,21 +196,21 @@ a {
 			<tr>
 				<td>
 					1. Great Work<br />
-					2.Outstanding Student<br />
-					3.Good Work Habits<br />
-					4.Very Neat & Accurate work<br />
+					2. Outstanding Student<br />
+					3. Good Work Habits<br />
+					4. Very Neat & Accurate work<br />
 					5. Highly motivated<br />
-					6.Contributes intelligently to class<br />
+					6. Contributes intelligently to class<br />
 					7. Works well in group activities<br />
 				</td>
 				<td>
 					8. Appears disorganized<br />
 					9. Quality of Work Declining<br />
-					10.Does not bring Materials<br />
-					11.Does not follow Directions<br />
-					12.Inconsistent effort<br />
-					13.Unacceptable behavior<br />
-					14.Difficulty in understanding subject matter<br />
+					10. Does not bring Materials<br />
+					11. Does not follow Directions<br />
+					12. Inconsistent effort<br />
+					13. Unacceptable behavior<br />
+					14. Difficulty in understanding subject matter<br />
 				</td>
 			</tr>
 		</tbody>
@@ -234,15 +238,19 @@ a {
 		<div class="clear"></div>
 	</div>
 	
-<?php foreach($student as $row) { ?>
+<?php foreach($array_student as $row) { ?>
 	<pagebreak />
 	<div class="title-top-student">JAFARIA EDUCATION CENTER</div>
-	<div class="name-student"><?= $row['s_name'] ?></div>
+	<div class="name-student"><?php echo $row['s_name'] ?></div>
 	<div class="text-center">
 		<div class="name-session">MID-TERM REPORT CARD</div>
 		<div class="periode">September 2014 - January 2015</div>
 		<br />
 		<br />
+		<?php $student_detail = 0; ?>
+		<?php echo 'continue here'; ?>
+		<?php exit; ?>
+		
 		<table class="table-report" align="center" width="100%">
 			<thead>
 				<tr>
@@ -305,3 +313,6 @@ a {
 	</div>
 <?php } ?>
 </body>
+<?php
+exit;
+?>

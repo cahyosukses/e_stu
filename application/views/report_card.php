@@ -95,17 +95,14 @@ $(document).ready(function() {
 				var raw_record = $(this).siblings('.hide').text();
 				eval('var record = ' + raw_record);
 				
-				Func.ajax({
+				Func.form.submit({
 					url: web.base + 'report_card/action',
-					// param: { action: 'get_student', student_id: record.id },
-					param: { action: record },
+					param: { action: 'generate_report', parent_id: record.parent_id },
 					callback: function(result) {
-						// Func.populate({ cnt: '#modal-comment form', record: result });
-						// $('#modal-comment').modal();
-						$.notify('Generate PDF success.', "success");
+						dt.reload();
+						console.log(result);
 					}
 				});
-				
 			});
 		}
 	}

@@ -46,6 +46,7 @@ and instead of the finalize button there will be a text saying "Grades were fina
 That page will have a few columns.
 It will be a list of parents with students enrolled.
 The columns will be Father Name, Mother Name, Number of Students Enrolled, and a control column
+- done
 
 6. On The administrator page, Under the report cards area, and under the control column,
 there will be button called generate report card,
