@@ -57,12 +57,10 @@
 					<table class="table table-striped" id="grade-finalize-grid">
 						<thead>
 							<tr>
-								<th style="width: 15%;">Name</th>
-								<th style="width: 15%;">Quran</th>
-								<th style="width: 15%;">Figh</th>
-								<th style="width: 15%;">Akhlaq</th>
-								<th style="width: 15%;">Tareekh</th>
-								<th style="width: 10%;">Control</th>
+								<th style="width: 25%;">Father Name</th>
+								<th style="width: 25%;">Mother Name</th>
+								<th style="width: 25%;">Number of Students Enrolled</th>
+								<th style="width: 25%;">Control</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -90,19 +88,21 @@ $(document).ready(function() {
 	// grid
 	var param = {
 		id: 'grade-finalize-grid',
-		source: 'grade_finalize/grid', aaSorting: [[ 0, "ASC" ]],
-		column: [ { }, { sClass: 'center' }, { sClass: 'center' }, { sClass: 'center' }, { sClass: 'center' }, { bSortable: false, sClass: 'center' } ],
+		source: 'report_card/grid', aaSorting: [[ 0, "ASC" ]],
+		column: [ { }, { sClass: 'center' }, { sClass: 'center' }, { bSortable: false, sClass: 'center' } ],
 		callback: function() {
 			$('#grade-finalize-grid .btn-edit').click(function() {
 				var raw_record = $(this).siblings('.hide').text();
 				eval('var record = ' + raw_record);
 				
 				Func.ajax({
-					url: web.base + 'grade_finalize/action',
-					param: { action: 'get_student', student_id: record.id },
+					url: web.base + 'report_card/action',
+					// param: { action: 'get_student', student_id: record.id },
+					param: { action: record },
 					callback: function(result) {
-						Func.populate({ cnt: '#modal-comment form', record: result });
-						$('#modal-comment').modal();
+						// Func.populate({ cnt: '#modal-comment form', record: result });
+						// $('#modal-comment').modal();
+						$.notify('Generate PDF success.', "success");
 					}
 				});
 				
@@ -110,7 +110,7 @@ $(document).ready(function() {
 		}
 	}
 	var dt = Func.datatable(param);
-	
+	/*
 	// form modal student
 	$('#modal-comment form').validate({
 		rules: {
@@ -127,13 +127,14 @@ $(document).ready(function() {
 		// ajax request
 		var param = Func.form.get_value('modal-comment form');
 		Func.form.submit({
-			url: web.base + 'grade_finalize/action',
+			url: web.base + 'report_card/action',
 			param: param,
 			callback: function(result) {
 				$('#modal-comment').modal('hide');
 			}
 		});
 	});
+	*/
 });
 </script>
 

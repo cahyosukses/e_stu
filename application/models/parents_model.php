@@ -89,7 +89,7 @@ class parents_model extends CI_Model {
 		$string_limit = GetStringLimit($param);
 		
 		$select_query = "
-			SELECT parents.p_id parent_id, COUNT(*) AS student_count
+			SELECT parents.p_id parent_id, p_father_name father_name, p_mother_name mother_name, COUNT(*) AS student_count
 			FROM ".PARENTS." parents
 			LEFT JOIN ".STUDENT." student ON student.s_parent_id = parents.p_id
 			WHERE 1 $string_namelike $string_parent $string_filter
@@ -100,7 +100,7 @@ class parents_model extends CI_Model {
 		
         $select_result = mysql_query($select_query) or die(mysql_error());
 		while ( $row = mysql_fetch_assoc( $select_result ) ) {
-			$array[] = $row;
+			$array[] = $this->sync($row, $param);
 		}
 		
         return $array;
@@ -156,8 +156,12 @@ class parents_model extends CI_Model {
 		$row = StripArray($row, array( ));
 		
 		// sync with user table
-		$row['user_id'] = $row['p_id'];
-		$row['user_display'] = $row['p_father_name'];
+		if (isset($row['p_id'])) {
+			$row['user_id'] = $row['p_id'];
+		}
+		if (isset($row['p_father_name'])) {
+			$row['user_display'] = $row['p_father_name'];
+		}
 		$row['user_type_id'] = USER_TYPE_PARENT;
 		if (isset($row['p_passwd'])) {
 			$row['user_pword'] = $row['p_passwd'];
