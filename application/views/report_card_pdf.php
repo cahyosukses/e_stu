@@ -1,7 +1,9 @@
 <?php
-	$parent = $this->parents_model->get_by_id(array( 'p_id' => $_POST['parent_id'] ));
-	$array_student = $this->student_model->get_array(array( 's_parent_id' => $action['parent_id'] ));
+	$parent_id = (isset($parent_id)) ? $parent_id : $_POST['parent_id'];
+	$parent = $this->parents_model->get_by_id(array( 'p_id' => $parent_id ));
+	$array_student = $this->student_model->get_array(array( 's_parent_id' => $parent['p_id'] ));
 ?>
+
 <style>
 .clear {
 	clear: both;
@@ -239,6 +241,11 @@ a {
 	</div>
 	
 <?php foreach($array_student as $row) { ?>
+	<?php $student_grade = $this->student_model->get_grade(array( 'student_id' => $row['s_id'] )); ?>
+	<?php $student_teacher = $this->student_model->get_teacher(array( 'student_id' => $row['s_id'] )); ?>
+	<?php $student_comment = $this->teacher_comment_model->get_student(array( 'student_id' => $row['s_id'] )); ?>
+	<?php $absence_count = $this->attendance_student_model->get_absence_count(array( 'student_id' => $row['s_id'] )); ?>
+	
 	<pagebreak />
 	<div class="title-top-student">JAFARIA EDUCATION CENTER</div>
 	<div class="name-student"><?php echo $row['s_name'] ?></div>
@@ -247,9 +254,6 @@ a {
 		<div class="periode">September 2014 - January 2015</div>
 		<br />
 		<br />
-		<?php $student_detail = 0; ?>
-		<?php echo 'continue here'; ?>
-		<?php exit; ?>
 		
 		<table class="table-report" align="center" width="100%">
 			<thead>
@@ -263,44 +267,46 @@ a {
 			</thead>
 			<tbody>
 				<tr>
-					<td class="class">Quran <br/>Advanced</td>
-					<td>Brother Taha Dharsi</td>
-					<td>92%</td>
-					<td>A</td>
-					<td>1,2</td>
+					<td class="class">Quran <br/><?php echo $row['quran_level_name']; ?></td>
+					<td><?php echo $student_teacher['quran']; ?></td>
+					<td><?php echo round($student_grade[0]['quran_summary']); ?>%</td>
+					<td><?php echo $student_grade[0]['quran_grade']; ?></td>
+					<td><?php echo $student_comment['quran']; ?></td>
 				</tr>
 				<tr class="even">
-					<td class="class">Akhlaq <br/>Class 6</td>
-					<td>Brother Taha Dharsi</td>
-					<td>92%</td>
-					<td>A</td>
-					<td>1,2</td>
+					<td class="class">Akhlaq <br/><?php echo $row['class_level_name']; ?></td>
+					<td><?php echo $student_teacher['akhlaq']; ?></td>
+					<td><?php echo round($student_grade[0]['akhlaq_summary']); ?>%</td>
+					<td><?php echo $student_grade[0]['akhlaq_grade']; ?></td>
+					<td><?php echo $student_comment['akhlaq']; ?></td>
 				</tr>
 				<tr>
-					<td class="class">Fiqh <br/>Class 6</td>
-					<td>Brother Taha Dharsi</td>
-					<td>92%</td>
-					<td>A</td>
-					<td>1,2</td>
+					<td class="class">Fiqh <br/><?php echo $row['class_level_name']; ?></td>
+					<td><?php echo $student_teacher['fiqh']; ?></td>
+					<td><?php echo round($student_grade[0]['figh_summary']); ?>%</td>
+					<td><?php echo $student_grade[0]['figh_grade']; ?></td>
+					<td><?php echo $student_comment['fiqh']; ?></td>
 				</tr>
 				<tr class="even">
-					<td class="class">Taareekh <br/>Class 6</td>
-					<td>Brother Taha Dharsi</td>
-					<td>92%</td>
-					<td>A</td>
-					<td>1,2</td>
+					<td class="class">Taareekh <br/><?php echo $row['class_level_name']; ?></td>
+					<td><?php echo $student_teacher['tareekh']; ?></td>
+					<td><?php echo round($student_grade[0]['tareekh_summary']); ?>%</td>
+					<td><?php echo $student_grade[0]['tareekh_grade']; ?></td>
+					<td><?php echo $student_comment['tareekh']; ?></td>
 				</tr>
+				<?php if ($row['class_level_id'] >= 5) { ?>
 				<tr>
-					<td class="class">Aqaid <br/>Class 6</td>
-					<td>Brother Taha Dharsi</td>
-					<td>92%</td>
-					<td>A</td>
-					<td>1,2</td>
+					<td class="class">Aqaid <br/><?php echo $row['class_level_name']; ?></td>
+					<td><?php echo $student_teacher['aqaid']; ?></td>
+					<td><?php echo round($student_grade[0]['aqaid_summary']); ?>%</td>
+					<td><?php echo $student_grade[0]['aqaid_grade']; ?></td>
+					<td><?php echo $student_comment['aqaid']; ?></td>
 				</tr>
+				<?php } ?>
 				<tr class="attendance even">
 					<td class="class" colspan="2">Attendance</td>
-					<td>85%</td>
-					<td colspan="2" class="text-red"><b>Total Absences : 2</b></td>
+					<td><?php echo round($student_grade[0]['attendance_summary']); ?>%</td>
+					<td colspan="2" class="text-red"><b>Total Absences : <?php echo $absence_count['total']; ?></b></td>
 				</tr>
 			</tbody>
 		</table>
@@ -313,6 +319,3 @@ a {
 	</div>
 <?php } ?>
 </body>
-<?php
-exit;
-?>

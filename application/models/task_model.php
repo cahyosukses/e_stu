@@ -123,6 +123,7 @@ class task_model extends CI_Model {
 				OR (task.quran_level_id = '".$student['quran_level_id']."' AND '".$student['quran_level_id']."' != 0)
 			LIMIT 1000
 		";
+		
         $select_result = mysql_query($select_query) or die(mysql_error());
 		while ( $row = mysql_fetch_assoc( $select_result ) ) {
 			if (!empty($row['attachment'])) {
@@ -131,6 +132,31 @@ class task_model extends CI_Model {
 					$file['task_title'] = $row['title'];
 					$file['file_link'] = base_url('static/upload/'.$file['file_name']);
 					$array[] = $file;
+				}
+			}
+		}
+		
+		// check config finalize
+		$finalize = $this->config_model->get_by_id(array( 'config_key' => 'report-card-finalize' ));
+		if (!empty($finalize['config_value'])) {
+			// add report card
+			$select_query = "
+				SELECT parents.report_card
+				FROM ".STUDENT." student
+				LEFT JOIN ".PARENTS." parents ON student.s_parent_id = parents.p_id
+				WHERE student.s_id = '".$param['student_id']."'
+			";
+			
+			$select_result = mysql_query($select_query) or die(mysql_error());
+			while ( $row = mysql_fetch_assoc( $select_result ) ) {
+				if (!empty($row['report_card'])) {
+					$report_card = array(
+						'file_name' => $row['report_card'],
+						'task_title' => 'Report Card',
+						'file_only' => preg_replace('/\d+\//i', '', $row['report_card']),
+						'file_link' => base_url('static/temp/'.$row['report_card'])
+					);
+					$array = array_merge($array, array( $report_card ));
 				}
 			}
 		}

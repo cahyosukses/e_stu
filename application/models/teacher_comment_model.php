@@ -78,6 +78,34 @@ class teacher_comment_model extends CI_Model {
 		return $total;
     }
 	
+    function get_student($param = array()) {
+        $array = array();
+		
+		$select_query = "
+			SELECT 
+				( SELECT CONCAT(comment_good, '<br />', comment_bad) FROM ".TEACHER_COMMENT." WHERE class_type_id = 1 AND student_id = '".$param['student_id']."' ) quran,
+				( SELECT CONCAT(comment_good, '<br />', comment_bad) FROM ".TEACHER_COMMENT." WHERE class_type_id = 2 AND student_id = '".$param['student_id']."' ) fiqh,
+				( SELECT CONCAT(comment_good, '<br />', comment_bad) FROM ".TEACHER_COMMENT." WHERE class_type_id = 3 AND student_id = '".$param['student_id']."' ) akhlaq,
+				( SELECT CONCAT(comment_good, '<br />', comment_bad) FROM ".TEACHER_COMMENT." WHERE class_type_id = 4 AND student_id = '".$param['student_id']."' ) tareekh,
+				( SELECT CONCAT(comment_good, '<br />', comment_bad) FROM ".TEACHER_COMMENT." WHERE class_type_id = 5 AND student_id = '".$param['student_id']."' ) aqaid
+		";
+		
+        $select_result = mysql_query($select_query) or die(mysql_error());
+		while ( $row = mysql_fetch_assoc( $select_result ) ) {
+			$array = $row;
+		}
+		
+		// sync
+		foreach ($array as $key => $value) {
+			$string_check = trim(strip_tags($value));
+			if (empty($string_check)) {
+				$array[$key] = '-';
+			}
+		}
+		
+        return $array;
+    }
+	
     function delete($param) {
 		$delete_query  = "DELETE FROM ".TEACHER_COMMENT." WHERE id = '".$param['id']."' LIMIT 1";
 		$delete_result = mysql_query($delete_query) or die(mysql_error());

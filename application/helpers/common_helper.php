@@ -701,7 +701,7 @@ if (! function_exists('GetStringLimit')) {
 		
 		if ( isset( $Param['iDisplayStart'] ) && $Param['iDisplayLength'] != '-1' ) {
 			$StringLimit = mysql_real_escape_string( $Param['iDisplayStart'] ).", ". mysql_real_escape_string( $Param['iDisplayLength'] );
-			} else if (isset($Param['start']) || isset($Param['limit'])) {
+		} else if (isset($Param['start']) || isset($Param['limit'])) {
 			$PageOffset = (isset($Param['start']) && !empty($Param['start'])) ? $Param['start'] : 0;
 			$PageLimit = (isset($Param['limit']) && !empty($Param['limit'])) ? $Param['limit'] : 25;
 			$StringLimit = "$PageOffset, $PageLimit";
@@ -1040,5 +1040,23 @@ if (! function_exists('get_array_class_type')) {
 		/*	*/
 		
 		return $array;
+	}
+}
+
+if (! function_exists('get_score_grade')) {
+	function get_score_grade($value) {
+		if ($value >= 90) {
+			$result = 'A';
+		} else if ($value >= 80) {
+			$result = 'B';
+		} else if ($value >= 70) {
+			$result = 'C';
+		} else if ($value >= 60) {
+			$result = 'S';
+		} else {
+			$result = 'N';
+		}
+		
+		return $result;
 	}
 }

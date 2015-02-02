@@ -3,6 +3,7 @@
 	$class_type_id = (isset($_GET['class_type_id'])) ? $_GET['class_type_id'] : 0;
 	$class_level_id = (isset($_GET['class_level_id'])) ? $_GET['class_level_id'] : 0;
 	$quran_level_id = (isset($_GET['quran_level_id'])) ? $_GET['quran_level_id'] : 0;
+	$finalize = $this->config_model->get_by_id(array( 'config_key' => 'report-card-finalize' ));
 	
 	// user
 	$user = $this->user_model->get_session();
@@ -44,8 +45,8 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td>1. Great Work<br />2. Outstanding Student<br />3. Good Work Habits<br />4. Very Neat & Accurate work<br />5. Highly motivated<br />6. Contributes intelligently to class<br />7. Works well in group activities</td>
-							<td>8. Appears disorganized<br />9. Quality of Work Declining<br />10. Does not bring Materials<br />11. Does not follow Directions<br />12. Inconsistent effort<br />13. Unacceptable behavior<br />14. Difficulty in understanding subject matter</td>
+							<td style="padding: 10px;">1. Great Work<br />2. Outstanding Student<br />3. Good Work Habits<br />4. Very Neat & Accurate work<br />5. Highly motivated<br />6. Contributes intelligently to class<br />7. Works well in group activities</td>
+							<td style="padding: 10px;">8. Appears disorganized<br />9. Quality of Work Declining<br />10. Does not bring Materials<br />11. Does not follow Directions<br />12. Inconsistent effort<br />13. Unacceptable behavior<br />14. Difficulty in understanding subject matter</td>
 						</tr>
 					</tbody>
 				</table>
@@ -90,7 +91,10 @@
 						</thead>
 						<tbody></tbody>
 					</table>
-					<div style="padding: 15px 0 25px 0;">Grades were finalized for this class on &lt;Date and Time Stamp&gt;</div>
+					
+					<?php if (!empty($finalize['config_value'])) { ?>
+					<div style="padding: 15px 0 25px 0;">Grades were finalized for this class on <?php echo get_format_date($finalize['config_value'], array( 'date_format' => 'F j Y, H:i' )); ?></div>
+					<?php } ?>
 				</div>
 			</div>
 		</section>

@@ -47,6 +47,21 @@
 		</form>
 	</div>
 	
+	<div id="modal-progress" class="modal modal-big hide fade" tabindex="-1" role="dialog" aria-labelledby=" modal-progressLabel" aria-hidden="true">
+		<form class="form-horizontal" style="margin: 0px;">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 id="modal-progressLabel">Generating Report Progress</h3>
+			</div>
+			<div class="modal-body">
+				Generating Report Card 0%
+			</div>
+			<div class="modal-footer">
+				<input type="button" class="btn" data-dismiss="modal" value="Close" />
+			</div>
+		</form>
+	</div>
+	
 	<section class="container">
 		<section class="row-fluid">
 			<h3 class="box-header">Report Card</h3>
@@ -81,6 +96,29 @@ $(document).ready(function() {
 			var raw = $('.cnt-page').html();
 			eval('var data = ' + raw);
 			page.data = data;
+		},
+		report_card: {
+			start: 0, total: 0,
+			generate: function(p) {
+				p.finalize = (typeof(p.finalize) == 'undefined') ? 0 : p.finalize;
+				
+				Func.ajax({
+					url: web.base + 'report_card/action',
+					param: { action: 'generate_all', start: page.report_card.start, finalize: p.finalize },
+					callback: function(result) {
+						page.report_card.start++;
+						page.report_card.total = result.parent_total;
+						$('#modal-progress .modal-body').html(result.message);
+						$('#modal-progress').modal();
+						
+						if (result.is_complete) {
+							dt.reload();
+						} else {
+							page.report_card.generate(p);
+						}
+					}
+				});
+			}
 		}
 	}
 	page.init();
@@ -89,7 +127,10 @@ $(document).ready(function() {
 	var param = {
 		id: 'grade-finalize-grid',
 		source: 'report_card/grid', aaSorting: [[ 0, "ASC" ]],
-		column: [ { }, { sClass: 'center' }, { sClass: 'center' }, { bSortable: false, sClass: 'center' } ],
+		column: [ { }, { }, { sClass: 'center' }, { bSortable: false, sClass: 'center' } ],
+		init: function() {
+			$('#grade-finalize-grid_length').prepend('<div style="float: left; padding: 0 5px 0 0;" class="btn-group"><input type="button" class="btn btn-generate" value="Generate All" /><input type="button" class="btn btn-finalize" value="Finalize & Email" /></div>');
+		},
 		callback: function() {
 			$('#grade-finalize-grid .btn-edit').click(function() {
 				var raw_record = $(this).siblings('.hide').text();
@@ -100,38 +141,50 @@ $(document).ready(function() {
 					param: { action: 'generate_report', parent_id: record.parent_id },
 					callback: function(result) {
 						dt.reload();
-						console.log(result);
 					}
+				});
+			});
+			
+			$('#grade-finalize-grid .btn-preview').click(function() {
+				var raw_record = $(this).siblings('.hide').text();
+				eval('var record = ' + raw_record);
+				window.open(web.base + 'static/temp/' + record.report_card);
+			});
+			
+			$('#grade-finalize-grid .btn-email').click(function() {
+				var raw_record = $(this).siblings('.hide').text();
+				eval('var record = ' + raw_record);
+				
+				Func.form.submit({
+					url: web.base + 'report_card/action',
+					param: { action: 'email_report', parent_id: record.parent_id }
 				});
 			});
 		}
 	}
 	var dt = Func.datatable(param);
-	/*
-	// form modal student
-	$('#modal-comment form').validate({
-		rules: {
-			comment_good: { required: true },
-			comment_bad: { required: true }
-		}
-	});
-	$('#modal-comment form').submit(function(e) {
-		e.preventDefault();
-		if (! $('#modal-comment form').valid()) {
-			return false;
-		}
+	
+	// button
+	$('.btn-generate').click(function() {
+		// reset data and generate
+		page.report_card.total = 0;
+		page.report_card.start = 0;
+		page.report_card.generate({ });
 		
-		// ajax request
-		var param = Func.form.get_value('modal-comment form');
-		Func.form.submit({
-			url: web.base + 'report_card/action',
-			param: param,
-			callback: function(result) {
-				$('#modal-comment').modal('hide');
-			}
-		});
+		// reset modal
+		$('#modal-progress .modal-body').html('Generating Report Card 0%');
+		$('#modal-progress').modal();
 	});
-	*/
+	$('.btn-finalize').click(function() {
+		// reset data and generate
+		page.report_card.total = 0;
+		page.report_card.start = 0;
+		page.report_card.generate({ finalize: 1 });
+		
+		// reset modal
+		$('#modal-progress .modal-body').html('Generating Report Card 0%');
+		$('#modal-progress').modal();
+	});
 });
 </script>
 

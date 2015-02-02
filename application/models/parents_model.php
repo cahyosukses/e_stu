@@ -6,7 +6,8 @@ class parents_model extends CI_Model {
 		
         $this->field = array(
 			'p_id', 'p_status', 'p_father_name', 'p_father_email', 'p_father_cell', 'p_mother_name', 'p_mother_email',
-			'p_mother_cell', 'p_phone', 'p_address', 'p_apt', 'p_city', 'p_state', 'p_zip', 'p_signature', 'p_passwd', 'p_pdf2014', 'p_sign_image'
+			'p_mother_cell', 'p_phone', 'p_address', 'p_apt', 'p_city', 'p_state', 'p_zip', 'p_signature', 'p_passwd', 'p_pdf2014', 'p_sign_image',
+			'report_card'
 		);
     }
 
@@ -82,6 +83,10 @@ class parents_model extends CI_Model {
     function get_array_child($param = array()) {
         $array = array();
 		
+		$param['field_replace']['student_count'] = '';
+		$param['field_replace']['father_name'] = 'parents.p_father_name';
+		$param['field_replace']['mother_name'] = 'parents.p_mother_name';
+		
 		$string_namelike = (!empty($param['namelike'])) ? "AND parents.p_father_name LIKE '%".$param['namelike']."%'" : '';
 		$string_parent = (isset($param['parent_id'])) ? "AND parents.p_id = '".$param['parent_id']."'" : '';
 		$string_filter = GetStringFilter($param, @$param['column']);
@@ -89,7 +94,7 @@ class parents_model extends CI_Model {
 		$string_limit = GetStringLimit($param);
 		
 		$select_query = "
-			SELECT parents.p_id parent_id, p_father_name father_name, p_mother_name mother_name, COUNT(*) AS student_count
+			SELECT SQL_CALC_FOUND_ROWS parents.p_id parent_id, p_father_name father_name, p_mother_name mother_name, p_father_email, p_mother_email, report_card, COUNT(*) AS student_count
 			FROM ".PARENTS." parents
 			LEFT JOIN ".STUDENT." student ON student.s_parent_id = parents.p_id
 			WHERE 1 $string_namelike $string_parent $string_filter
@@ -134,13 +139,34 @@ class parents_model extends CI_Model {
 	}
 	
     function get_count($param = array()) {
-		$select_query = "SELECT FOUND_ROWS() total";
+		if (isset($param['is_query'])) {
+			$select_query = "SELECT COUNT(*) total FROM ".PARENTS."";
+		} else {
+			$select_query = "SELECT FOUND_ROWS() total";
+		}
+		
 		$select_result = mysql_query($select_query) or die(mysql_error());
 		$row = mysql_fetch_assoc($select_result);
 		$total = $row['total'];
 		
 		return $total;
     }
+	
+	function generate_report_card($param = array()) {
+		// generate report card
+		@mkdir($this->config->item('base_path').'/static/temp/'.date("Y/"));
+		@mkdir($this->config->item('base_path').'/static/temp/'.date("Y/m"));
+		@mkdir($this->config->item('base_path').'/static/temp/'.date("Y/m/d"));
+		$pdf_name = date("Y/m/d/YmdHis_").rand(1000,9998).'.pdf';
+		$pdf_path = $this->config->item('base_path').'/static/temp/'.$pdf_name;
+		$template = $this->load->view( 'report_card_pdf', $param, true );
+		$this->mpdf->WriteHTML($template);
+		$this->mpdf->Output($pdf_path, 'F');
+		
+		// update report card
+		$param = array( 'p_id' => $param['parent_id'], 'report_card' => $pdf_name );
+		$this->parents_model->update($param);
+	}
 	
     function delete($param) {
 		$delete_query  = "DELETE FROM ".PARENTS." WHERE p_id = '".$param['p_id']."' LIMIT 1";
@@ -174,11 +200,71 @@ class parents_model extends CI_Model {
 		if (!empty($row['p_sign_image'])) {
 			$row['p_sign_image_link'] = base_url('static/upload/'.$row['p_sign_image']);
 		}
+		if (!empty($row['report_card'])) {
+			$row['report_card_link'] = base_url('static/temp/'.$row['report_card']);
+		}
 		
 		if (count(@$param['column']) > 0) {
+			if (isset($param['grid_type'])) {
+				if ($param['grid_type'] == 'report_card') {
+					$param['is_custom'] = '<span class="cursor-font-awesome icon-pencil btn-edit" title="Generate Report Card"></span>';
+					if (!empty($row['report_card'])) {
+						$param['is_custom'] .= '<span class="cursor-font-awesome icon-link btn-preview" title="View Report Card"></span>';
+						$param['is_custom'] .= '<span class="cursor-font-awesome icon-envelope btn-email" title="Send Email"></span>';
+					}
+				}
+			}
+			
+			
 			$row = dt_view_set($row, $param);
 		}
 		
 		return $row;
+	}
+	
+	function send_report_card($param = array()) {
+		// user
+		$user = $this->user_model->get_session();
+		$user_type = $this->user_type_model->get_by_id(array( 'id' => $user['user_type_id'] ));
+		
+		// add email
+		$array_to = $array_sub = array();
+		$array_parent = $this->parents_model->get_array_child($param);
+		foreach ($array_parent as $row) {
+			if (!empty($row['p_father_email'])) {
+				$array_to[] = array(
+					'name' => $row['father_name'],
+					'email' => strtolower($row['p_father_email'])
+				);
+				$array_sub['-parent_name-'][] = $row['father_name'];
+				$array_sub['-link_report_card-'][] = '<a href="'.$row['report_card_link'].'" target="_blank">Report Card</a>';
+			}
+			if (!empty($row['p_mother_email'])) {
+				$array_to[] = array(
+					'name' => $row['mother_name'],
+					'email' => strtolower($row['p_mother_email'])
+				);
+				$array_sub['-parent_name-'][] = $row['mother_name'];
+				$array_sub['-link_report_card-'][] = '<a href="'.$row['report_card_link'].'" target="_blank">Report Card</a>';
+			}
+		}
+		
+		// get content
+		$content = $this->config_model->get_by_id(array( 'config_key' => 'report-card-email' ));
+		
+		// sent grid
+		$param_mail = array(
+			'user_email' => $user['user_email'],
+			'user_display' => $user['user_display'],
+			'array_to' => $array_to,
+			'array_sub' => $array_sub,
+			'subject' => 'Report Card',
+			'content' => $content['config_value'],
+			'title' => $user_type['title']
+		);
+		$this->mail_model->sent_grid($param_mail);
+		
+		$result = array( 'status' => true, 'message' => 'Email sent.' );
+		return $result;
 	}
 }

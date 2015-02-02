@@ -39,7 +39,7 @@ The lit will have a few columns - The student Name, The percentage and a control
 There will be save and finalize button and a save and back button.
 and once you click on the save and finalize button that you will go back to the task page
 and instead of the finalize button there will be a text saying "Grades were finalized for this class on <Date and Time Stamp>"
-- later
+- done
 
 5. There will be a new page for the administrator login which will be called report cards.
 - http://jafariaschool.org/student/report_card
@@ -51,29 +51,35 @@ The columns will be Father Name, Mother Name, Number of Students Enrolled, and a
 6. On The administrator page, Under the report cards area, and under the control column,
 there will be button called generate report card,
 once the administrator clicks on that, we will generate a pdf file with the template
+- done
 
 I have attached. The template is pretty self-explanatory.
 For the Additional comments, we will add the numbers that relate to the text that the teachers added.
 If they have multiple children, page 2 of the template will be there for each child.
+- done
 
 Once the report is generated,
 there will be additional button added under the control column that will will say view report card.
 If the administrator clicks on generate again, it will overwrite the previous PDF will with the new one.
 There will also be an email button for each parent, where the administrator can manually email the parent the locked PDF file,
 We can add another template for how the email looks in the config area
+- done
 
 6. On the reports card page,
 there will be a Generate All button that will generate reports card for everyone
 and it would be nice if when we click it shows us progress like
 (Generating for parent 1 - Percentage, Generating for Parent 2)
+- done
 
 7. Also on that page,
 There will be another button called Finalize and Email all Parents
 where it will generate all the report cards again,
 and send an email to the father and the mother with the link to their student's report card
+- done
 
 8. Once the administrator clicks on the Finalize and email button,
 The report card is added to the Parent's dashboard in the documents area.
+- done
 
 I am sure there will be some changes after you code it up the first time
 around but if possible lets do this in the student_test first so I can give
@@ -85,12 +91,17 @@ application/config/autoload.php
 application/config/constants.php
 application/controllers/grade_finalize.php
 application/controllers/report_card.php
+application/helpers/common_helper.php
+application/models/attendance_student_model.php
+application/models/parents_model.php
 application/models/student_model.php
+application/models/task_model.php
 application/models/teacher_comment_model.php
 application/views/common/panel_left.php
 application/views/grade_finalize.php
 application/views/task.php
 application/views/report_card.php
+application/views/report_card_pdf.php
 static/js/public_function.js
 note.txt
 
@@ -98,9 +109,21 @@ note.txt
 
 
 
+
+
+
+
+
 update sql :
 	- CREATE TABLE IF NOT EXISTS `teacher_comment` ( `id` int(11) NOT NULL AUTO_INCREMENT, `student_id` int(11) NOT NULL, `class_type_id` int(11) NOT NULL, `comment` varchar(255) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+	- ALTER TABLE `parents` ADD `report_card` VARCHAR( 50 ) NOT NULL ;
+	- INSERT INTO `config` (`config_id`, `config_key`, `config_value`, `config_desc`, `config_group`, `is_hidden`) VALUES (NULL, 'report-card-email', 'Dear -parent_name-,
 
+Report Card Email, please update via Config Module
+
+Link attachment below :
+-link_report_card-', 'Report Card Email', '0', '0');
+	- INSERT INTO `config` (`config_id`, `config_key`, `config_value`, `config_desc`, `config_group`, `is_hidden`) VALUES (NULL, 'report-card-finalize', '', 'Report Card Finalize', '0', '1');
 
 
 

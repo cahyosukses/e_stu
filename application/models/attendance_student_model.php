@@ -98,6 +98,25 @@ class attendance_student_model extends CI_Model {
 		return $total;
     }
 	
+	function get_absence_count($param = array()) {
+        $result = array( 'total' => 0 );
+		
+		$select_query = "
+			SELECT COUNT(*) total
+			FROM ".ATTENDANCE_STUDENT." attendance_student_count
+			WHERE
+				attendance_student_count.award = 0
+				AND attendance_student_count.student_id = '".$param['student_id']."'
+		";
+		
+        $select_result = mysql_query($select_query) or die(mysql_error());
+		while ( $row = mysql_fetch_assoc( $select_result ) ) {
+			$result = $row;
+		}
+		
+        return $result;
+	}
+	
 	function get_array_notification($param = array()) {
         $array = array();
 		

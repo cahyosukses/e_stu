@@ -110,6 +110,29 @@ class student_model extends CI_Model {
 		return $total;
     }
 	
+	function get_teacher($param = array()) {
+		// set default result
+		$result = array( 'quran' => '', 'fiqh' => '', 'akhlaq' => '', 'tareekh' => '', 'aqaid' => '' );
+		
+		$select_query = "
+			SELECT s_id, class_level_id, quran_level_id,
+				( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 1 AND teacher_class.quran_level_id = student.quran_level_id ) quran,
+				( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 2 AND teacher_class.class_level_id = student.class_level_id ) fiqh,
+				( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 3 AND teacher_class.class_level_id = student.class_level_id ) akhlaq,
+				( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 4 AND teacher_class.class_level_id = student.class_level_id ) tareekh,
+				( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 5 AND teacher_class.class_level_id = student.class_level_id ) aqaid
+			FROM ".STUDENT." student
+			WHERE s_id = '".$param['student_id']."'
+		";
+		
+		$select_result = mysql_query($select_query) or die(mysql_error());
+		while ( $row = mysql_fetch_assoc( $select_result ) ) {
+			$result = $row;
+		}
+		
+		return $result;
+	}
+	
     function get_grade($param = array()) {
 		// param
 		$param['default_value'] = (isset($param['default_value'])) ? $param['default_value'] : true;
@@ -468,6 +491,7 @@ class student_model extends CI_Model {
 			+ ($row['quran_test'] * $teacher_task_weight['quran']['test'] * 0.01)
 			+ ($row['quran_quiz'] * $teacher_task_weight['quran']['quiz'] * 0.01)
 			+ ($row['quran_attendance'] * $teacher_task_weight['quran']['attendance'] * 0.01);
+		$row['quran_grade'] = get_score_grade($row['quran_summary']);
 		$row['quran_label']
 			= "Homework - ".$row['quran_homework']."%\n"
 			. " Project - ".$row['quran_project']."%\n"
@@ -480,6 +504,7 @@ class student_model extends CI_Model {
 			+ ($row['figh_test'] * $teacher_task_weight['fiqh']['test'] * 0.01)
 			+ ($row['figh_quiz'] * $teacher_task_weight['fiqh']['quiz'] * 0.01)
 			+ ($row['figh_attendance'] * $teacher_task_weight['fiqh']['attendance'] * 0.01);
+		$row['figh_grade'] = get_score_grade($row['figh_summary']);
 		$row['figh_label']
 			= "Homework - ".$row['figh_homework']."%\n"
 			. " Project - ".$row['figh_project']."%\n"
@@ -492,6 +517,7 @@ class student_model extends CI_Model {
 			+ ($row['akhlaq_test'] * $teacher_task_weight['akhlaq']['test'] * 0.01)
 			+ ($row['akhlaq_quiz'] * $teacher_task_weight['akhlaq']['quiz'] * 0.01)
 			+ ($row['akhlaq_attendance'] * $teacher_task_weight['akhlaq']['attendance'] * 0.01);
+		$row['akhlaq_grade'] = get_score_grade($row['akhlaq_summary']);
 		$row['akhlaq_label']
 			= "Homework - ".$row['akhlaq_homework']."%\n"
 			. " Project - ".$row['akhlaq_project']."%\n"
@@ -504,6 +530,7 @@ class student_model extends CI_Model {
 			+ ($row['tareekh_test'] * $teacher_task_weight['tareekh']['test'] * 0.01)
 			+ ($row['tareekh_quiz'] * $teacher_task_weight['tareekh']['quiz'] * 0.01)
 			+ ($row['tareekh_attendance'] * $teacher_task_weight['tareekh']['attendance'] * 0.01);
+		$row['tareekh_grade'] = get_score_grade($row['tareekh_summary']);
 		$row['tareekh_label']
 			= "Homework - ".$row['tareekh_homework']."%\n"
 			. " Project - ".$row['tareekh_project']."%\n"
@@ -519,6 +546,7 @@ class student_model extends CI_Model {
 				+ ($row['aqaid_test'] * $teacher_task_weight['aqaid']['test'] * 0.01)
 				+ ($row['aqaid_quiz'] * $teacher_task_weight['aqaid']['quiz'] * 0.01)
 				+ ($row['aqaid_attendance'] * $teacher_task_weight['aqaid']['attendance'] * 0.01);
+			$row['aqaid_grade'] = get_score_grade($row['aqaid_summary']);
 			$row['aqaid_label']
 				= "Homework - ".$row['aqaid_homework']."%\n"
 				. " Project - ".$row['aqaid_project']."%\n"
