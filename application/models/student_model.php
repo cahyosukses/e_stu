@@ -263,14 +263,14 @@ class student_model extends CI_Model {
 		// array data
 		$array_data = array( 'class_level_id' => 20 );
 		foreach ($array_temp as $key => $array) {
-			$array_data[$key] = (count($array) == 0) ? 100 : array_sum($array) / count($array);
+			$array_data[$key] = (count($array) == 0) ? null : array_sum($array) / count($array);
 		}
 		
 		// fix and sync
-		$array_data['quran_attendance'] = $array_data['quran_attendance'] / 100;
-		$array_data['figh_attendance'] = $array_data['figh_attendance'] / 100;
-		$array_data['akhlaq_attendance'] = $array_data['akhlaq_attendance'] / 100;
-		$array_data['tareekh_attendance'] = $array_data['tareekh_attendance'] / 100;
+		$array_data['quran_attendance'] = (is_null($array_data['quran_attendance'])) ? $array_data['quran_attendance'] : $array_data['quran_attendance'] / 100;
+		$array_data['figh_attendance'] = (is_null($array_data['figh_attendance'])) ? $array_data['figh_attendance'] : $array_data['figh_attendance'] / 100;
+		$array_data['akhlaq_attendance'] = (is_null($array_data['akhlaq_attendance'])) ? $array_data['akhlaq_attendance'] : $array_data['akhlaq_attendance'] / 100;
+		$array_data['tareekh_attendance'] = (is_null($array_data['tareekh_attendance'])) ? $array_data['tareekh_attendance'] : $array_data['tareekh_attendance'] / 100;
 		$array_data['aqaid_attendance'] = $array_data['tareekh_attendance'];			// add this because not all student do now always have aqaid class
 		$result = $this->sync_grade($array_data, $task_weight);
 		
@@ -328,15 +328,10 @@ class student_model extends CI_Model {
 		while ( $row = mysql_fetch_assoc( $select_result ) ) {
 			foreach ($row as $key => $value) {
 				if (isset($array_temp[$key])) {
-					if (is_null($value)) {
-						if (in_array($key, array('quran_attendance'))) {
-							$value = 1;
-						} else {
-							$value = 100;
-						}
+					if (! is_null($value)) {
+						$array_temp[$key][] = $value;
 					}
 					
-					$array_temp[$key][] = $value;
 				}
 			}
 		}
@@ -373,20 +368,13 @@ class student_model extends CI_Model {
 				class_level_id IN (SELECT class_level_id FROM teacher_class WHERE user_id = '".$param['user_id']."' AND class_level_id != 0)
 			LIMIT 250
 		";
-		
 		$select_result = mysql_query($select_query) or die(mysql_error());
 		while ( $row = mysql_fetch_assoc( $select_result ) ) {
 			foreach ($row as $key => $value) {
 				if (isset($array_temp[$key])) {
-					if (is_null($value)) {
-						if (in_array($key, array('figh_attendance', 'akhlaq_attendance', 'tareekh_attendance', 'aqaid_attendance'))) {
-							$value = 1;
-						} else {
-							$value = 100;
-						}
+					if (! is_null($value)) {
+						$array_temp[$key][] = $value;
 					}
-					
-					$array_temp[$key][] = $value;
 				}
 			}
 		}
@@ -394,14 +382,7 @@ class student_model extends CI_Model {
 		// array data
 		$array_data = array( 'class_level_id' => 20 );
 		foreach ($array_temp as $key => $array) {
-			// create default value
-			if (in_array($key, array( 'quran_attendance' ))) {
-				$default_value = 1;
-			} else {
-				$default_value = 100;
-			}
-			
-			$array_data[$key] = (count($array) == 0) ? $default_value : array_sum($array) / count($array);
+			$array_data[$key] = (count($array) == 0) ? null : array_sum($array) / count($array);
 		}
 		
 		// sync
@@ -455,104 +436,194 @@ class student_model extends CI_Model {
 	}
 	
 	function sync_grade($row, $task_weight, $param = array()) {
-		$row['quran_homework'] = (is_null($row['quran_homework'])) ? 100 : intval($row['quran_homework']);
-		$row['quran_project'] = (is_null($row['quran_project'])) ? 100 : intval($row['quran_project']);
-		$row['quran_test'] = (is_null($row['quran_test'])) ? 100 : intval($row['quran_test']);
-		$row['quran_quiz'] = (is_null($row['quran_quiz'])) ? 100 : intval($row['quran_quiz']);
-		$row['quran_attendance'] = (is_null($row['quran_attendance'])) ? 100 : intval($row['quran_attendance'] * 100);
-		$row['figh_homework'] = (is_null($row['figh_homework'])) ? 100 : intval($row['figh_homework']);
-		$row['figh_project'] = (is_null($row['figh_project'])) ? 100 : intval($row['figh_project']);
-		$row['figh_test'] = (is_null($row['figh_test'])) ? 100 : intval($row['figh_test']);
-		$row['figh_quiz'] = (is_null($row['figh_quiz'])) ? 100 : intval($row['figh_quiz']);
-		$row['figh_attendance'] = (is_null($row['figh_attendance'])) ? 100 : intval($row['figh_attendance'] * 100);
-		$row['akhlaq_homework'] = (is_null($row['akhlaq_homework'])) ? 100 : intval($row['akhlaq_homework']);
-		$row['akhlaq_project'] = (is_null($row['akhlaq_project'])) ? 100 : intval($row['akhlaq_project']);
-		$row['akhlaq_test'] = (is_null($row['akhlaq_test'])) ? 100 : intval($row['akhlaq_test']);
-		$row['akhlaq_quiz'] = (is_null($row['akhlaq_quiz'])) ? 100 : intval($row['akhlaq_quiz']);
-		$row['akhlaq_attendance'] = (is_null($row['akhlaq_attendance'])) ? 100 : intval($row['akhlaq_attendance'] * 100);
-		$row['tareekh_homework'] = (is_null($row['tareekh_homework'])) ? 100 : intval($row['tareekh_homework']);
-		$row['tareekh_project'] = (is_null($row['tareekh_project'])) ? 100 : intval($row['tareekh_project']);
-		$row['tareekh_test'] = (is_null($row['tareekh_test'])) ? 100 : intval($row['tareekh_test']);
-		$row['tareekh_quiz'] = (is_null($row['tareekh_quiz'])) ? 100 : intval($row['tareekh_quiz']);
-		$row['tareekh_attendance'] = (is_null($row['tareekh_attendance'])) ? 100 : intval($row['tareekh_attendance'] * 100);
-		$row['aqaid_homework'] = (is_null($row['aqaid_homework'])) ? 100 : intval($row['aqaid_homework']);
-		$row['aqaid_project'] = (is_null($row['aqaid_project'])) ? 100 : intval($row['aqaid_project']);
-		$row['aqaid_test'] = (is_null($row['aqaid_test'])) ? 100 : intval($row['aqaid_test']);
-		$row['aqaid_quiz'] = (is_null($row['aqaid_quiz'])) ? 100 : intval($row['aqaid_quiz']);
-		$row['aqaid_attendance'] = (is_null($row['aqaid_attendance'])) ? 100 : intval($row['aqaid_attendance'] * 100);
-		
 		// get task weight spesific teacher
 		$teacher_task_weight = $this->teacher_class_model->get_task_weight(array( 'student_id' => @$row['id'], 'task_weight' => $task_weight ));
 		
-		// summary & label
-		$row['quran_summary']
-			= ($row['quran_homework'] * $teacher_task_weight['quran']['homework'] * 0.01)
-			+ ($row['quran_project'] * $teacher_task_weight['quran']['project'] * 0.01)
-			+ ($row['quran_test'] * $teacher_task_weight['quran']['test'] * 0.01)
-			+ ($row['quran_quiz'] * $teacher_task_weight['quran']['quiz'] * 0.01)
-			+ ($row['quran_attendance'] * $teacher_task_weight['quran']['attendance'] * 0.01);
+		// quran
+		$row['quran_label'] = '';
+		$row['quran_devider'] = 0;
+		$row['quran_summary'] = 0;
+		if (!is_null($row['quran_homework'])) {
+			$row['quran_homework'] = intval($row['quran_homework']);
+			$row['quran_label'] .= "Homework - ".$row['quran_homework']."%\n";
+			$row['quran_devider'] += $teacher_task_weight['quran']['homework'];
+			$row['quran_summary'] += $row['quran_homework'] * $teacher_task_weight['quran']['homework'] * 1;
+		}
+		if (!is_null($row['quran_project'])) {
+			$row['quran_project'] = intval($row['quran_project']);
+			$row['quran_label'] .= " Project - ".$row['quran_project']."%\n";
+			$row['quran_devider'] += $teacher_task_weight['quran']['project'];
+			$row['quran_summary'] += $row['quran_project'] * $teacher_task_weight['quran']['project'] * 1;
+		}
+		if (!is_null($row['quran_test'])) {
+			$row['quran_test'] = intval($row['quran_test']);
+			$row['quran_label'] .= " Test - ".$row['quran_test']."%\n";
+			$row['quran_devider'] += $teacher_task_weight['quran']['test'];
+			$row['quran_summary'] += $row['quran_test'] * $teacher_task_weight['quran']['test'] * 1;
+		}
+		if (!is_null($row['quran_quiz'])) {
+			$row['quran_quiz'] = intval($row['quran_quiz']);
+			$row['quran_label'] .= " Quiz - ".$row['quran_quiz']."%\n";
+			$row['quran_devider'] += $teacher_task_weight['quran']['quiz'];
+			$row['quran_summary'] += $row['quran_quiz'] * $teacher_task_weight['quran']['quiz'] * 1;
+		}
+		if (!is_null($row['quran_attendance'])) {
+			$row['quran_attendance'] = intval($row['quran_attendance'] * 100);
+			$row['quran_label'] .= " Attendance - ".$row['quran_attendance']."%";
+			$row['quran_devider'] += $teacher_task_weight['quran']['attendance'];
+			$row['quran_summary'] += $row['quran_attendance'] * $teacher_task_weight['quran']['attendance'] * 1;
+		}
+		$row['quran_summary'] = ($row['quran_devider'] > 0) ? round($row['quran_summary'] / $row['quran_devider']) : 100;
 		$row['quran_grade'] = get_score_grade($row['quran_summary']);
-		$row['quran_label']
-			= "Homework - ".$row['quran_homework']."%\n"
-			. " Project - ".$row['quran_project']."%\n"
-			. " Test - ".$row['quran_test']."%\n"
-			. " Quiz - ".$row['quran_quiz']."%\n"
-			. " Attendance - ".$row['quran_attendance']."%";
-		$row['figh_summary']
-			= ($row['figh_homework'] * $teacher_task_weight['fiqh']['homework'] * 0.01)
-			+ ($row['figh_project'] * $teacher_task_weight['fiqh']['project'] * 0.01)
-			+ ($row['figh_test'] * $teacher_task_weight['fiqh']['test'] * 0.01)
-			+ ($row['figh_quiz'] * $teacher_task_weight['fiqh']['quiz'] * 0.01)
-			+ ($row['figh_attendance'] * $teacher_task_weight['fiqh']['attendance'] * 0.01);
+		
+		// figh
+		$row['figh_label'] = '';
+		$row['figh_devider'] = 0;
+		$row['figh_summary'] = 0;
+		if (!is_null($row['figh_homework'])) {
+			$row['figh_homework'] = intval($row['figh_homework']);
+			$row['figh_label'] .= "Homework - ".$row['figh_homework']."%\n";
+			$row['figh_devider'] += $teacher_task_weight['fiqh']['homework'];
+			$row['figh_summary'] += $row['figh_homework'] * $teacher_task_weight['fiqh']['homework'] * 1;
+		}
+		if (!is_null($row['figh_project'])) {
+			$row['figh_project'] = intval($row['figh_project']);
+			$row['figh_label'] .= " Project - ".$row['figh_project']."%\n";
+			$row['figh_devider'] += $teacher_task_weight['fiqh']['project'];
+			$row['figh_summary'] += $row['figh_project'] * $teacher_task_weight['fiqh']['project'] * 1;
+		}
+		if (!is_null($row['figh_test'])) {
+			$row['figh_test'] = intval($row['figh_test']);
+			$row['figh_label'] .= " Test - ".$row['figh_test']."%\n";
+			$row['figh_devider'] += $teacher_task_weight['fiqh']['test'];
+			$row['figh_summary'] += $row['figh_test'] * $teacher_task_weight['fiqh']['test'] * 1;
+		}
+		if (!is_null($row['figh_quiz'])) {
+			$row['figh_quiz'] = intval($row['figh_quiz']);
+			$row['figh_label'] .= " Quiz - ".$row['figh_quiz']."%\n";
+			$row['figh_devider'] += $teacher_task_weight['fiqh']['quiz'];
+			$row['figh_summary'] += $row['figh_quiz'] * $teacher_task_weight['fiqh']['quiz'] * 1;
+		}
+		if (!is_null($row['figh_attendance'])) {
+			$row['figh_attendance'] = intval($row['figh_attendance'] * 100);
+			$row['figh_label'] .= " Attendance - ".$row['figh_attendance']."%";
+			$row['figh_devider'] += $teacher_task_weight['fiqh']['attendance'];
+			$row['figh_summary'] += $row['figh_attendance'] * $teacher_task_weight['fiqh']['attendance'] * 1;
+		}
+		$row['figh_summary'] = ($row['figh_devider'] > 0) ? round($row['figh_summary'] / $row['figh_devider']) : 100;
 		$row['figh_grade'] = get_score_grade($row['figh_summary']);
-		$row['figh_label']
-			= "Homework - ".$row['figh_homework']."%\n"
-			. " Project - ".$row['figh_project']."%\n"
-			. " Test - ".$row['figh_test']."%\n"
-			. " Quiz - ".$row['figh_quiz']."%\n"
-			. " Attendance - ".$row['figh_attendance']."%\n";
-		$row['akhlaq_summary']
-			= ($row['akhlaq_homework'] * $teacher_task_weight['akhlaq']['homework'] * 0.01)
-			+ ($row['akhlaq_project'] * $teacher_task_weight['akhlaq']['project'] * 0.01)
-			+ ($row['akhlaq_test'] * $teacher_task_weight['akhlaq']['test'] * 0.01)
-			+ ($row['akhlaq_quiz'] * $teacher_task_weight['akhlaq']['quiz'] * 0.01)
-			+ ($row['akhlaq_attendance'] * $teacher_task_weight['akhlaq']['attendance'] * 0.01);
+		
+		// akhlaq
+		$row['akhlaq_label'] = '';
+		$row['akhlaq_devider'] = 0;
+		$row['akhlaq_summary'] = 0;
+		if (!is_null($row['akhlaq_homework'])) {
+			$row['akhlaq_homework'] = intval($row['akhlaq_homework']);
+			$row['akhlaq_label'] .= "Homework - ".$row['akhlaq_homework']."%\n";
+			$row['akhlaq_devider'] += $teacher_task_weight['akhlaq']['homework'];
+			$row['akhlaq_summary'] += $row['akhlaq_homework'] * $teacher_task_weight['akhlaq']['homework'] * 1;
+		}
+		if (!is_null($row['akhlaq_project'])) {
+			$row['akhlaq_project'] = intval($row['akhlaq_project']);
+			$row['akhlaq_label'] .= " Project - ".$row['akhlaq_project']."%\n";
+			$row['akhlaq_devider'] += $teacher_task_weight['akhlaq']['project'];
+			$row['akhlaq_summary'] += $row['akhlaq_project'] * $teacher_task_weight['akhlaq']['project'] * 1;
+		}
+		if (!is_null($row['akhlaq_test'])) {
+			$row['akhlaq_test'] = intval($row['akhlaq_test']);
+			$row['akhlaq_label'] .= " Test - ".$row['akhlaq_test']."%\n";
+			$row['akhlaq_devider'] += $teacher_task_weight['akhlaq']['test'];
+			$row['akhlaq_summary'] += $row['akhlaq_test'] * $teacher_task_weight['akhlaq']['test'] * 1;
+		}
+		if (!is_null($row['akhlaq_quiz'])) {
+			$row['akhlaq_quiz'] = intval($row['akhlaq_quiz']);
+			$row['akhlaq_label'] .= " Quiz - ".$row['akhlaq_quiz']."%\n";
+			$row['akhlaq_devider'] += $teacher_task_weight['akhlaq']['quiz'];
+			$row['akhlaq_summary'] += $row['akhlaq_quiz'] * $teacher_task_weight['akhlaq']['quiz'] * 1;
+		}
+		if (!is_null($row['akhlaq_attendance'])) {
+			$row['akhlaq_attendance'] = intval($row['akhlaq_attendance'] * 100);
+			$row['akhlaq_label'] .= " Attendance - ".$row['akhlaq_attendance']."%";
+			$row['akhlaq_devider'] += $teacher_task_weight['akhlaq']['attendance'];
+			$row['akhlaq_summary'] += $row['akhlaq_attendance'] * $teacher_task_weight['akhlaq']['attendance'] * 1;
+		}
+		$row['akhlaq_summary'] = ($row['akhlaq_devider'] > 0) ? round($row['akhlaq_summary'] / $row['akhlaq_devider']) : 100;
 		$row['akhlaq_grade'] = get_score_grade($row['akhlaq_summary']);
-		$row['akhlaq_label']
-			= "Homework - ".$row['akhlaq_homework']."%\n"
-			. " Project - ".$row['akhlaq_project']."%\n"
-			. " Test - ".$row['akhlaq_test']."%\n"
-			. " Quiz - ".$row['akhlaq_quiz']."%\n"
-			. " Attendance - ".$row['akhlaq_attendance']."%";
-		$row['tareekh_summary']
-			= ($row['tareekh_homework'] * $teacher_task_weight['tareekh']['homework'] * 0.01)
-			+ ($row['tareekh_project'] * $teacher_task_weight['tareekh']['project'] * 0.01)
-			+ ($row['tareekh_test'] * $teacher_task_weight['tareekh']['test'] * 0.01)
-			+ ($row['tareekh_quiz'] * $teacher_task_weight['tareekh']['quiz'] * 0.01)
-			+ ($row['tareekh_attendance'] * $teacher_task_weight['tareekh']['attendance'] * 0.01);
+		
+		// tareekh
+		$row['tareekh_label'] = '';
+		$row['tareekh_devider'] = 0;
+		$row['tareekh_summary'] = 0;
+		if (!is_null($row['tareekh_homework'])) {
+			$row['tareekh_homework'] = intval($row['tareekh_homework']);
+			$row['tareekh_label'] .= "Homework - ".$row['tareekh_homework']."%\n";
+			$row['tareekh_devider'] += $teacher_task_weight['tareekh']['homework'];
+			$row['tareekh_summary'] += $row['tareekh_homework'] * $teacher_task_weight['tareekh']['homework'] * 1;
+		}
+		if (!is_null($row['tareekh_project'])) {
+			$row['tareekh_project'] = intval($row['tareekh_project']);
+			$row['tareekh_label'] .= " Project - ".$row['tareekh_project']."%\n";
+			$row['tareekh_devider'] += $teacher_task_weight['tareekh']['project'];
+			$row['tareekh_summary'] += $row['tareekh_project'] * $teacher_task_weight['tareekh']['project'] * 1;
+		}
+		if (!is_null($row['tareekh_test'])) {
+			$row['tareekh_test'] = intval($row['tareekh_test']);
+			$row['tareekh_label'] .= " Test - ".$row['tareekh_test']."%\n";
+			$row['tareekh_devider'] += $teacher_task_weight['tareekh']['test'];
+			$row['tareekh_summary'] += $row['tareekh_test'] * $teacher_task_weight['tareekh']['test'] * 1;
+		}
+		if (!is_null($row['tareekh_quiz'])) {
+			$row['tareekh_quiz'] = intval($row['tareekh_quiz']);
+			$row['tareekh_label'] .= " Quiz - ".$row['tareekh_quiz']."%\n";
+			$row['tareekh_devider'] += $teacher_task_weight['tareekh']['quiz'];
+			$row['tareekh_summary'] += $row['tareekh_quiz'] * $teacher_task_weight['tareekh']['quiz'] * 1;
+		}
+		if (!is_null($row['tareekh_attendance'])) {
+			$row['tareekh_attendance'] = intval($row['tareekh_attendance'] * 100);
+			$row['tareekh_label'] .= " Attendance - ".$row['tareekh_attendance']."%";
+			$row['tareekh_devider'] += $teacher_task_weight['tareekh']['attendance'];
+			$row['tareekh_summary'] += $row['tareekh_attendance'] * $teacher_task_weight['tareekh']['attendance'] * 1;
+		}
+		$row['tareekh_summary'] = ($row['tareekh_devider'] > 0) ? round($row['tareekh_summary'] / $row['tareekh_devider']) : 100;
 		$row['tareekh_grade'] = get_score_grade($row['tareekh_summary']);
-		$row['tareekh_label']
-			= "Homework - ".$row['tareekh_homework']."%\n"
-			. " Project - ".$row['tareekh_project']."%\n"
-			. " Test - ".$row['tareekh_test']."%\n"
-			. " Quiz - ".$row['tareekh_quiz']."%\n"
-			. " Attendance - ".$row['tareekh_attendance']."%";
 		
 		// aqaid only level 5 or greater
 		if ($row['class_level_id'] >= 5) {
-			$row['aqaid_summary']
-				= ($row['aqaid_homework'] * $teacher_task_weight['aqaid']['homework'] * 0.01)
-				+ ($row['aqaid_project'] * $teacher_task_weight['aqaid']['project'] * 0.01)
-				+ ($row['aqaid_test'] * $teacher_task_weight['aqaid']['test'] * 0.01)
-				+ ($row['aqaid_quiz'] * $teacher_task_weight['aqaid']['quiz'] * 0.01)
-				+ ($row['aqaid_attendance'] * $teacher_task_weight['aqaid']['attendance'] * 0.01);
+			$row['aqaid_label'] = '';
+			$row['aqaid_devider'] = 0;
+			$row['aqaid_summary'] = 0;
+			if (!is_null($row['aqaid_homework'])) {
+				$row['aqaid_homework'] = intval($row['aqaid_homework']);
+				$row['aqaid_label'] .= "Homework - ".$row['aqaid_homework']."%\n";
+				$row['aqaid_devider'] += $teacher_task_weight['aqaid']['homework'];
+				$row['aqaid_summary'] += $row['aqaid_homework'] * $teacher_task_weight['aqaid']['homework'] * 1;
+			}
+			if (!is_null($row['aqaid_project'])) {
+				$row['aqaid_project'] = intval($row['aqaid_project']);
+				$row['aqaid_label'] .= " Project - ".$row['aqaid_project']."%\n";
+				$row['aqaid_devider'] += $teacher_task_weight['aqaid']['project'];
+				$row['aqaid_summary'] += $row['aqaid_project'] * $teacher_task_weight['aqaid']['project'] * 1;
+			}
+			if (!is_null($row['aqaid_test'])) {
+				$row['aqaid_test'] = intval($row['aqaid_test']);
+				$row['aqaid_label'] .= " Test - ".$row['aqaid_test']."%\n";
+				$row['aqaid_devider'] += $teacher_task_weight['aqaid']['test'];
+				$row['aqaid_summary'] += $row['aqaid_test'] * $teacher_task_weight['aqaid']['test'] * 1;
+			}
+			if (!is_null($row['aqaid_quiz'])) {
+				$row['aqaid_quiz'] = intval($row['aqaid_quiz']);
+				$row['aqaid_label'] .= " Quiz - ".$row['aqaid_quiz']."%\n";
+				$row['aqaid_devider'] += $teacher_task_weight['aqaid']['quiz'];
+				$row['aqaid_summary'] += $row['aqaid_quiz'] * $teacher_task_weight['aqaid']['quiz'] * 1;
+			}
+			if (!is_null($row['aqaid_attendance'])) {
+				$row['aqaid_attendance'] = intval($row['aqaid_attendance'] * 100);
+				$row['aqaid_label'] .= " Attendance - ".$row['aqaid_attendance']."%";
+				$row['aqaid_devider'] += $teacher_task_weight['aqaid']['attendance'];
+				$row['aqaid_summary'] += $row['aqaid_attendance'] * $teacher_task_weight['aqaid']['attendance'] * 1;
+			}
+			$row['aqaid_summary'] = ($row['aqaid_devider'] > 0) ? round($row['aqaid_summary'] / $row['aqaid_devider']) : 100;
 			$row['aqaid_grade'] = get_score_grade($row['aqaid_summary']);
-			$row['aqaid_label']
-				= "Homework - ".$row['aqaid_homework']."%\n"
-				. " Project - ".$row['aqaid_project']."%\n"
-				. " Test - ".$row['aqaid_test']."%\n"
-				. " Quiz - ".$row['aqaid_quiz']."%\n"
-				. " Attendance - ".$row['aqaid_attendance']."%";
 		} else {
 			unset($row['aqaid_homework']);
 			unset($row['aqaid_project']);
