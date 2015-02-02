@@ -230,7 +230,7 @@ a {
 	</div>
 	
 	<div style="padding: 50px 0 30px 0; text-align: center;">
-		<img src="<?php echo base_url('static/images/logo.gif'); ?>" style="width: 30%;" />
+		<img src="<?php echo base_url('static/images/Logo.gif'); ?>" style="width: 30%;" />
 	</div>
 	
 	<div class="footer" style="padding: 0px 5px 15px 5px; font-size: 12px;">
@@ -314,7 +314,7 @@ a {
 		<br />
 		<br />
 		<div style="padding: 50px 0 30px 0; text-align: center;">
-			<img src="<?php echo base_url('static/images/logo.gif'); ?>" style="width: 30%;" />
+			<img src="<?php echo base_url('static/images/Logo.gif'); ?>" style="width: 30%;" />
 		</div>
 	</div>
 <?php } ?>
