@@ -1,97 +1,47 @@
-Report Card Feature
-This will be touch all three users - Teachers, Parents and Administrator
+http://jafariaschool.org/student_test/grade_finalize?class_type_id=3&class_level_id=10
 
-1. In the Task area, there will be a finalize button for each class the teachers teaches
-- done
+On the finalize page
+the teacher should only be able to view just their subject that they are teaching,
+not all subjects Also on that page,
+there should be a Finalize button that takes them back to the task page
+with the message grades finalized for class __ Subject ____ when they click on the finalize button,
+it should check if every student has atleast 1 comment added.
+If not, it should give errors that -student name-- has no comments
 
-2. Once you click on the button,
-it will redirect them to a new page (not a modal) showing the list of students, the entire list not just the first 10,
-The lit will have a few columns - The student Name, The percentage and a control column, with a link to add comments
-- http://jafariaschool.org/student/grade_finalize
-- done
+There should also be a save and exit button, where they can come back.
+Also I feel like adding the comments is not very intuitive,
+how about if the actual text are buttons and I can add them by clicking on them,
+and then once they are added, I can click on them again to remove them
 
-3. When you click on the add comments, a modal pops up with 2 columns
-- Good and Bad
-- A teacher can add as many good comments and as many bad comments as they want.
-- done
+---------------------------------------------------------------------------------------------------
 
-1. Good comments
-1. Great Work
-2. Outstanding Student
-3. Good Work Habits
-4. Very Neat & Accurate work
-5. Highly motivated
-6. Contributes intelligently to class
-7. Works well in group activities
-- done
+Administrator
 
-2. Bad Comments
-8. Appears disorganized
-9. Quality of Work Declining
-10. Does not bring Materials
-11. Does not follow Directions
-12. Inconsistent effort
-13. Unacceptable behavior
-14. Difficulty in understanding subject matte
-- done
+There should be section on the administrator report card page similar to the handbook section,
+where I can see what subjects have been finalized and what subjects have not been finalized.
+So the table should look like
 
-4. On the Finalize page
-There will be save and finalize button and a save and back button.
-and once you click on the save and finalize button that you will go back to the task page
-and instead of the finalize button there will be a text saying "Grades were finalized for this class on <Date and Time Stamp>"
-- done
+Column :
+	- Class (Which would be the number or Quran),
+	- Subject (In the case of Quran it would say the level),
+	- Teacher,
+	- and a control to email the individual teacehr.
 
-5. There will be a new page for the administrator login which will be called report cards.
-- http://jafariaschool.org/student/report_card
-That page will have a few columns.
-It will be a list of parents with students enrolled.
-The columns will be Father Name, Mother Name, Number of Students Enrolled, and a control column
-- done
+There will also be a button to email all teachers.
+The email will look like:
 
-6. On The administrator page, Under the report cards area, and under the control column,
-there will be button called generate report card,
-once the administrator clicks on that, we will generate a pdf file with the template
-- done
+Dear Teacher,
 
-I have attached. The template is pretty self-explanatory.
-For the Additional comments, we will add the numbers that relate to the text that the teachers added.
-If they have multiple children, page 2 of the template will be there for each child.
-- done
+You have not yet finalized the grades for the following classes:
 
-Once the report is generated,
-there will be additional button added under the control column that will will say view report card.
-If the administrator clicks on generate again, it will overwrite the previous PDF will with the new one.
-There will also be an email button for each parent, where the administrator can manually email the parent the locked PDF file,
-We can add another template for how the email looks in the config area
-- done
+List of the classes
 
-6. On the reports card page,
-there will be a Generate All button that will generate reports card for everyone
-and it would be nice if when we click it shows us progress like
-(Generating for parent 1 - Percentage, Generating for Parent 2)
-- done
+Please finalize them by February 10th, 2015
 
-7. Also on that page,
-There will be another button called Finalize and Email all Parents
-where it will generate all the report cards again,
-and send an email to the father and the mother with the link to their student's report card
-- done
+---------------------------------------------------------------------------------------------------
 
-8. Once the administrator clicks on the Finalize and email button,
-The report card is added to the Parent's dashboard in the documents area.
-- done
+Also - when I send the email, it does not have the link for the report card
 
-I am sure there will be some changes after you code it up the first time
-around but if possible lets do this in the student_test first so I can give
-feedback.
-
-the letter grading scale is as follows
-
-90 + - A
-80-89 - B
-70-79 - C
-60-70 - S
-less than 60 - N
 
 application/config/autoload.php
 application/config/constants.php
