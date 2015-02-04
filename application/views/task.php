@@ -446,10 +446,20 @@ $(document).ready(function() {
 		},
 		callback: function() {
 			// set filter
-			$('#cnt-class-filter [name="class_type"]').val(page.data.class_type_id);
-			$('#cnt-class-filter [name="class_type"]').change();
-			$('#cnt-class-filter .class-level select:visible').val(page.data.class_level_id);
-			$('#cnt-class-filter .class-level select:visible').change();
+			if (page.data.class_type_id != null) {
+				$('#cnt-class-filter [name="class_type"]').val(page.data.class_type_id);
+				$('#cnt-class-filter [name="class_type"]').change();
+			}
+			if (page.data.class_level_id != null) {
+				$('#cnt-class-filter .class-level select:visible').val(page.data.class_level_id);
+				$('#cnt-class-filter .class-level select:visible').change();
+			}
+			if (page.data.quran_level_id != null) {
+				$('#cnt-class-filter .class-level select:visible').val(page.data.quran_level_id);
+				$('#cnt-class-filter .class-level select:visible').change();
+			}
+			
+			// page.data.quran_level_id
 			
 			// set message
 			if (page.data.message != null) {

@@ -217,24 +217,75 @@ $(document).ready(function() {
 		source: 'report_card/grid', aaSorting: [[ 0, "ASC" ]],
 		column: [ { }, { }, { }, { bSortable: false, sClass: 'center' } ],
 		init: function() {
-			/*
-			$('#teacher-grid_length').prepend('<div style="float: left; padding: 0 5px 0 0;" class="btn-group"><input type="button" class="btn btn-generate" value="Generate All" /><input type="button" class="btn btn-finalize" value="Finalize & Email" /></div>');
-			
-			$('#tab-handbook-undone .dataTables_length').prepend(
+			$('#teacher-grid_length').prepend(
 				'<div style="float: left; padding: 0 5px 0 0;">' +
 					'<div class="btn-group open">' +
-						'<button data-toggle="dropdown" class="btn btn-notofication dropdown-toggle" style="margin: 0px;">Send Notification <span class="caret"></span></button>' +
+						'<button data-toggle="dropdown" class="btn dropdown-toggle" data-status_finalize="complete" style="margin: 0px;">Complete <span class="caret"></span></button>' +
+						'<button class="btn btn-sent-mail hide">Send Email to All</button>' +
 						'<ul class="dropdown-menu">' +
-							'<li><a class="cursor btn-request-handbook">All Parents</a></li>' +
-							'<li><a class="cursor btn-request-handbook" data-limit="10">First 10 Parents</a></li>' +
+							'<li><a class="cursor btn-complete">Complete</a></li>' +
+							'<li><a class="cursor btn-uncomplete">Not Completed</a></li>' +
 						'</ul>' +
 					'</div>' +
 				'</div>'
 			);
-			/*	*/
+			
+			// init button
+			$('#teacher-grid_length .btn-complete').click(function() {
+				// set title
+				var title = $(this).html();
+				$(this).parents('.btn-group').children('.dropdown-toggle').html(title + ' <span class="caret"></span>');
+				$(this).parents('.btn-group').children('.dropdown-toggle').data('status_finalize', 'complete');
+				dt_teacher.reload();
+				
+				// email button
+				$('#teacher-grid_length .btn-sent-mail').hide();
+			});
+			$('#teacher-grid_length .btn-uncomplete').click(function() {
+				// set title
+				var title = $(this).html();
+				$(this).parents('.btn-group').children('.dropdown-toggle').html(title + ' <span class="caret"></span>');
+				$(this).parents('.btn-group').children('.dropdown-toggle').data('status_finalize', 'uncomplete');
+				dt_teacher.reload();
+				
+				// email button
+				$('#teacher-grid_length .btn-sent-mail').show();
+			});
+			$('#teacher-grid_length .btn-sent-mail').click(function() {
+				Func.form.submit({
+					url: web.base + 'report_card/action',
+					param: { action: 'sent_mail_to_all', status_finalize: $('#teacher-grid_length .dropdown-toggle').data('status_finalize') }
+				});
+			});
 		},
 		fnServerParams: function(aoData) {
+			var status_finalize = 'complete';
+			if ($('#teacher-grid_length .dropdown-toggle').length == 1) {
+				status_finalize = $('#teacher-grid_length .dropdown-toggle').data('status_finalize');
+			}
+			
 			aoData.push( { name: 'grid_type', value: 'report_card_teacher' } );
+			aoData.push( { name: 'status_finalize', value: status_finalize } );
+		},
+		callback: function() {
+			$('#teacher-grid .btn-email').click(function() {
+				var raw_record = $(this).siblings('.hide').text();
+				eval('var record = ' + raw_record);
+				
+				// param
+				var param = {
+					action: 'sent_mail_to_single',
+					class_type_id: record.class_type_id
+				}
+				if (record.quran_level_id != 0) {
+					param.quran_level_id = record.quran_level_id;
+				}
+				if (record.class_level_id != 0) {
+					param.class_level_id = record.class_level_id;
+				}
+				
+				Func.form.submit({ url: web.base + 'report_card/action', param: param });
+			});
 		}
 	}
 	var dt_teacher = Func.datatable(param_teacher);

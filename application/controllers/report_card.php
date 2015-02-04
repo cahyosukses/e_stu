@@ -13,7 +13,7 @@ class report_card extends SE_Login_Controller {
 		$grid_type = (isset($_POST['grid_type'])) ? $_POST['grid_type'] : 'report_card';
 		
 		if ($grid_type == 'report_card_teacher') {
-			$_POST['is_custom'] = 1;
+			$_POST['is_custom'] = '<span class="cursor-font-awesome icon-envelope btn-email" title="Send Email"></span>';
 			$_POST['column'] = array( 'class_type_name', 'class_level_name', 'teacher_name' );
 			
 			$array_recap = $this->class_level_model->get_array_recap($_POST);
@@ -85,7 +85,103 @@ class report_card extends SE_Login_Controller {
 		else if ($action == 'email_report') {
 			$result = $this->parents_model->send_report_card($_POST);
 		}
+		else if ($action == 'sent_mail_to_all') {
+			$array_user = array();
+			$array_class = $this->class_level_model->get_array_recap(array( 'status_finalize' => $_POST['status_finalize'] ));
+			foreach ($array_class['array'] as $row) {
+				$param_temp = array( 'class_type_id' => $row['class_type_id'] );
+				if (!empty($row['quran_level_id'])) {
+					$param_temp['quran_level_id'] = $row['quran_level_id'];
+				}
+				if (!empty($row['class_level_id'])) {
+					$param_temp['class_level_id'] = $row['class_level_id'];
+				}
+				$array_temp = $this->teacher_class_model->get_array($param_temp);
+				foreach ($array_temp as $user_temp) {
+					if (!in_array($user_temp['user_id'], $array_user)) {
+						$array_user[] = $user_temp['user_id'];
+					}
+				}
+			}
+			
+			$result = $this->teacher_mail($array_user);
+		}
+		else if ($action == 'sent_mail_to_single') {
+			$array_user = array();
+			$array_temp = $this->teacher_class_model->get_array($_POST);
+			foreach ($array_temp as $user_temp) {
+				if (!in_array($user_temp['user_id'], $array_user)) {
+					$array_user[] = $user_temp['user_id'];
+				}
+			}
+			
+			$result = $this->teacher_mail($array_user);
+		}
 		
 		echo json_encode($result);
+	}
+	
+	function teacher_mail($array_user_id) {
+		// user
+		$user = $this->user_model->get_session();
+		$user_type = $this->user_type_model->get_by_id(array( 'id' => $user['user_type_id'] ));
+		
+		// add email
+		$array_to = $array_sub = array();
+		$array_user = $this->user_model->get_array(array( 'user_id_in' => implode(',', $array_user_id) ));
+		foreach ($array_user as $row) {
+			if (!empty($row['user_email'])) {
+				// user class
+				$class_info = '';
+				$array_class = $this->teacher_class_model->get_array(array( 'user_id' => $row['user_id'] ));
+				foreach ($array_class as $class_teacher) {
+					// record from class note
+					$param_check = array( 'class_type_id' => $class_teacher['class_type_id'] );
+					if (!empty($class_teacher['quran_level_id'])) {
+						$param_check['quran_level_id'] = $class_teacher['quran_level_id'];
+					}
+					if (!empty($class_teacher['class_level_id'])) {
+						$param_check['class_level_id'] = $class_teacher['class_level_id'];
+					}
+					$row_check = $this->class_note_model->get_by_id($param_check);
+					if (count($row_check) > 0) {
+						continue;
+					}
+					
+					// add to class info
+					if (!empty($class_teacher['quran_level_id'])) {
+						$class_info .= '- '.$class_teacher['quran_level_name']."\n";
+					}
+					if (!empty($class_teacher['class_level_id'])) {
+						$class_info .= '- '.$class_teacher['class_level_name']."\n";
+					}
+				}
+				
+				// set email parameter
+				$array_to[] = array(
+					'name' => $row['user_display'],
+					'email' => strtolower($row['user_email'])
+				);
+				$array_sub['-list_of_the_classes-'][] = $class_info;
+			}
+		}
+		
+		// get content
+		$content = $this->config_model->get_by_id(array( 'config_key' => 'report-card-teacher' ));
+		
+		// sent grid
+		$param_mail = array(
+			'user_email' => $user['user_email'],
+			'user_display' => $user['user_display'],
+			'array_to' => $array_to,
+			'array_sub' => $array_sub,
+			'subject' => 'Report Card',
+			'content' => $content['config_value'],
+			'title' => $user_type['title']
+		);
+		$this->mail_model->sent_grid($param_mail);
+		
+		$result = array( 'status' => true, 'message' => count($array_to).' email sent.' );
+		return $result;
 	}
 }

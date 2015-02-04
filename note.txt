@@ -25,12 +25,14 @@ Administrator
 There should be section on the administrator report card page similar to the handbook section,
 where I can see what subjects have been finalized and what subjects have not been finalized.
 So the table should look like
+- done
 
 Column :
 	- Class (Which would be the number or Quran),
 	- Subject (In the case of Quran it would say the level),
 	- Teacher,
 	- and a control to email the individual teacehr.
+- done
 
 There will also be a button to email all teachers.
 The email will look like:
@@ -61,6 +63,7 @@ application/models/student_model.php
 application/models/task_model.php
 application/models/teacher_class_model.php
 application/models/teacher_comment_model.php
+application/models/user_model.php
 application/views/common/panel_left.php
 application/views/grade_finalize.php
 application/views/task.php
@@ -79,6 +82,7 @@ note.txt
 
 update sql :
 	- CREATE TABLE IF NOT EXISTS `teacher_comment` ( `id` int(11) NOT NULL AUTO_INCREMENT, `student_id` int(11) NOT NULL, `class_type_id` int(11) NOT NULL, `comment` varchar(255) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+	- ALTER TABLE `teacher_comment` CHANGE `comment` `comment_good` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL;
 	- ALTER TABLE `parents` ADD `report_card` VARCHAR( 50 ) NOT NULL ;
 	- INSERT INTO `config` (`config_id`, `config_key`, `config_value`, `config_desc`, `config_group`, `is_hidden`) VALUES (NULL, 'report-card-email', 'Dear -parent_name-,
 
@@ -90,7 +94,13 @@ Link attachment below :
 	
 	
 	- CREATE TABLE IF NOT EXISTS `class_note` ( `id` int(11) NOT NULL AUTO_INCREMENT, `class_type_id` int(11) NOT NULL, `class_level_id` int(11) NOT NULL, `quran_level_id` int(11) NOT NULL, `finalize_date` datetime NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-	
+	- INSERT INTO `student_db`.`config` (`config_id`, `config_key`, `config_value`, `config_desc`, `config_group`, `is_hidden`) VALUES (NULL, 'report-card-teacher', 'Dear Teacher,
+
+You have not yet finalized the grades for the following classes:
+
+-list_of_the_classes-
+
+Please finalize them by February 10th, 2015', 'Report Card Teacher', '0', '');
 
 
 
