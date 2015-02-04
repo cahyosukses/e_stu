@@ -136,9 +136,11 @@ class student_model extends CI_Model {
     function get_grade($param = array()) {
 		// param
 		$param['default_value'] = (isset($param['default_value'])) ? $param['default_value'] : true;
+		
 		$string_student = (isset($param['student_id'])) ? "AND _student.s_id = '".$param['student_id']."'" : '';
 		$string_quran_level = (isset($param['quran_level_id'])) ? "AND _student.quran_level_id = '".$param['quran_level_id']."'" : '';
 		$string_class_level = (isset($param['class_level_id'])) ? "AND _student.class_level_id = '".$param['class_level_id']."'" : '';
+		$string_sorting = GetStringSorting($param, @$param['column'], 's_name ASC');
 		
 		// get task grade
 		$task_weight = $this->task_type_model->get_weight();
@@ -190,6 +192,7 @@ class student_model extends CI_Model {
 				$string_student
 				$string_quran_level
 				$string_class_level
+			ORDER BY $string_sorting
 			LIMIT 250
 		";
 		

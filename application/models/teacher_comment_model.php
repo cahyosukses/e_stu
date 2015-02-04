@@ -125,4 +125,39 @@ class teacher_comment_model extends CI_Model {
 		
 		return $row;
 	}
+	
+	function is_complete($param = array()) {
+		$result = array( 'array_student' => array() );
+		
+		$string_quran_level = (isset($param['quran_level_id'])) ? "AND student.quran_level_id = '".$param['quran_level_id']."'" : "";
+		$string_class_level = (isset($param['class_level_id'])) ? "AND student.class_level_id = '".$param['class_level_id']."'" : "";
+		
+		$select_query = "
+			SELECT SQL_CALC_FOUND_ROWS teacher_comment.*, student.s_name
+			FROM ".STUDENT." student
+			LEFT JOIN ".TEACHER_COMMENT." teacher_comment ON teacher_comment.student_id = student.s_id
+			WHERE
+				(	teacher_comment.class_type_id = '".$param['class_type_id']."'
+					OR teacher_comment.class_type_id IS NULL )
+				$string_quran_level
+				$string_class_level
+			ORDER BY student.s_name
+			LIMIT 500
+		";
+		
+		$select_result = mysql_query($select_query) or die(mysql_error());
+		while ( $row = mysql_fetch_assoc( $select_result ) ) {
+			if (empty($row['comment_good']) && empty($row['comment_bad'])) {
+				$result['array_student'][] = $row;
+			}
+		}
+		
+		if (count($result['array_student']) == 0) {
+			$result['status'] = true;
+		} else {
+			$result['status'] = false;
+		}
+		
+		return $result;
+	}
 }

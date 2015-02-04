@@ -1,17 +1,22 @@
 http://jafariaschool.org/student_test/grade_finalize?class_type_id=3&class_level_id=10
 
 On the finalize page
-the teacher should only be able to view just their subject that they are teaching,
-not all subjects Also on that page,
-there should be a Finalize button that takes them back to the task page
-with the message grades finalized for class __ Subject ____ when they click on the finalize button,
+the teacher should only be able to view just their subject that they are teaching not all subjects
+- done
+
+there should be a Finalize button that takes them back to the task page with the message grades finalized for class __ Subject ____
+when they click on the finalize button,
+- done
+
 it should check if every student has atleast 1 comment added.
 If not, it should give errors that -student name-- has no comments
+- done
 
 There should also be a save and exit button, where they can come back.
 Also I feel like adding the comments is not very intuitive,
 how about if the actual text are buttons and I can add them by clicking on them,
 and then once they are added, I can click on them again to remove them
+- done
 
 ---------------------------------------------------------------------------------------------------
 
@@ -49,9 +54,12 @@ application/controllers/grade_finalize.php
 application/controllers/report_card.php
 application/helpers/common_helper.php
 application/models/attendance_student_model.php
+application/models/class_level_model.php
+application/models/class_note_model.php
 application/models/parents_model.php
 application/models/student_model.php
 application/models/task_model.php
+application/models/teacher_class_model.php
 application/models/teacher_comment_model.php
 application/views/common/panel_left.php
 application/views/grade_finalize.php
@@ -60,7 +68,6 @@ application/views/report_card.php
 application/views/report_card_pdf.php
 static/js/public_function.js
 note.txt
-
 
 
 
@@ -80,7 +87,10 @@ Report Card Email, please update via Config Module
 Link attachment below :
 -link_report_card-', 'Report Card Email', '0', '0');
 	- INSERT INTO `config` (`config_id`, `config_key`, `config_value`, `config_desc`, `config_group`, `is_hidden`) VALUES (NULL, 'report-card-finalize', '', 'Report Card Finalize', '0', '1');
-
+	
+	
+	- CREATE TABLE IF NOT EXISTS `class_note` ( `id` int(11) NOT NULL AUTO_INCREMENT, `class_type_id` int(11) NOT NULL, `class_level_id` int(11) NOT NULL, `quran_level_id` int(11) NOT NULL, `finalize_date` datetime NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+	
 
 
 

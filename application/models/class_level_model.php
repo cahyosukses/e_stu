@@ -110,7 +110,101 @@ class class_level_model extends CI_Model {
 		
         return $array;
     }
-
+	
+	function get_array_recap($param = array()) {
+        $result = array( 'array' => array(), 'count' => 0 );
+		
+		// param
+		$string_filter = GetStringFilter($param, @$param['column']);
+		$string_limit = GetStringLimit($param);
+		
+		// get record
+		$select_query = "
+			SELECT *
+			FROM (
+				SELECT '1' class_type_id, 'Quran' class_type_name, quran_level.id class_level_id, quran_level.name class_level_name, quran_level.no_order no_order, class_note.finalize_date,
+					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 1 AND teacher_class.quran_level_id = quran_level.id ) teacher_name
+				FROM quran_level
+				LEFT JOIN class_note ON class_note.quran_level_id = quran_level.id
+				UNION
+				SELECT '2' class_type_id, 'Fiqh' class_type_name, class_level.id class_level_id, class_level.name class_level_name, class_level.no_order no_order, class_note.finalize_date,
+					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 2 AND teacher_class.class_level_id = class_level.id ) teacher_name
+				FROM class_level
+				LEFT JOIN class_note ON class_note.class_level_id = class_level.id
+				WHERE class_level.fiqh = 1
+				UNION
+				SELECT '3' class_type_id, 'Akhlaq' class_type_name, class_level.id class_level_id, class_level.name class_level_name, class_level.no_order no_order, class_note.finalize_date,
+					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 3 AND teacher_class.class_level_id = class_level.id ) teacher_name
+				FROM class_level
+				LEFT JOIN class_note ON class_note.class_level_id = class_level.id
+				WHERE class_level.akhlaq = 1
+				UNION
+				SELECT '4' class_type_id, 'Tareekh' class_type_name, class_level.id class_level_id, class_level.name class_level_name, class_level.no_order no_order, class_note.finalize_date,
+					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 4 AND teacher_class.class_level_id = class_level.id ) teacher_name
+				FROM class_level
+				LEFT JOIN class_note ON class_note.class_level_id = class_level.id
+				WHERE class_level.taareekh = 1
+				UNION
+				SELECT '5' class_type_id, 'Aqaid' class_type_name, class_level.id class_level_id, class_level.name class_level_name, class_level.no_order no_order, class_note.finalize_date,
+					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 5 AND teacher_class.class_level_id = class_level.id ) teacher_name
+				FROM class_level
+				LEFT JOIN class_note ON class_note.class_level_id = class_level.id
+				WHERE class_level.aqaid = 1
+			) table_temp
+			WHERE 1 $string_filter
+			ORDER BY class_type_name ASC, no_order ASC
+			LIMIT $string_limit
+		";
+		
+        $select_result = mysql_query($select_query) or die(mysql_error());
+		while ( $row = mysql_fetch_assoc( $select_result ) ) {
+			$result['array'][] = $this->sync($row, $param);
+		}
+		
+		// get count
+		$select_query = "
+			SELECT COUNT(*) total
+			FROM (
+				SELECT '1' class_type_id, 'Quran' class_type_name, quran_level.id class_level_id, quran_level.name class_level_name, quran_level.no_order no_order, class_note.finalize_date,
+					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 1 AND teacher_class.quran_level_id = quran_level.id ) teacher_name
+				FROM quran_level
+				LEFT JOIN class_note ON class_note.quran_level_id = quran_level.id
+				UNION
+				SELECT '2' class_type_id, 'Fiqh' class_type_name, class_level.id class_level_id, class_level.name class_level_name, class_level.no_order no_order, class_note.finalize_date,
+					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 2 AND teacher_class.class_level_id = class_level.id ) teacher_name
+				FROM class_level
+				LEFT JOIN class_note ON class_note.class_level_id = class_level.id
+				WHERE class_level.fiqh = 1
+				UNION
+				SELECT '3' class_type_id, 'Akhlaq' class_type_name, class_level.id class_level_id, class_level.name class_level_name, class_level.no_order no_order, class_note.finalize_date,
+					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 3 AND teacher_class.class_level_id = class_level.id ) teacher_name
+				FROM class_level
+				LEFT JOIN class_note ON class_note.class_level_id = class_level.id
+				WHERE class_level.akhlaq = 1
+				UNION
+				SELECT '4' class_type_id, 'Tareekh' class_type_name, class_level.id class_level_id, class_level.name class_level_name, class_level.no_order no_order, class_note.finalize_date,
+					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 4 AND teacher_class.class_level_id = class_level.id ) teacher_name
+				FROM class_level
+				LEFT JOIN class_note ON class_note.class_level_id = class_level.id
+				WHERE class_level.taareekh = 1
+				UNION
+				SELECT '5' class_type_id, 'Aqaid' class_type_name, class_level.id class_level_id, class_level.name class_level_name, class_level.no_order no_order, class_note.finalize_date,
+					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 5 AND teacher_class.class_level_id = class_level.id ) teacher_name
+				FROM class_level
+				LEFT JOIN class_note ON class_note.class_level_id = class_level.id
+				WHERE class_level.aqaid = 1
+			) table_temp
+			WHERE 1 $string_filter
+		";
+		
+        $select_result = mysql_query($select_query) or die(mysql_error());
+		while ( $row = mysql_fetch_assoc( $select_result ) ) {
+			$result['count'] = $row['total'];
+		}
+		
+        return $result;
+	}
+	
     function get_count($param = array()) {
 		$select_query = "SELECT FOUND_ROWS() total";
 		$select_result = mysql_query($select_query) or die(mysql_error());
@@ -154,7 +248,9 @@ class class_level_model extends CI_Model {
 		$row = StripArray($row);
 		
 		// title
-		$row['title'] = $row['name'];
+		if (isset($row['name'])) {
+			$row['title'] = $row['name'];
+		}
 		
 		if (count(@$param['column']) > 0) {
 			$row = dt_view_set($row, $param);

@@ -10,11 +10,21 @@ class report_card extends SE_Login_Controller {
     }
 	
 	function grid() {
-		$_POST['grid_type'] = 'report_card';
-		$_POST['column'] = array( 'father_name', 'mother_name', 'student_count' );
+		$grid_type = (isset($_POST['grid_type'])) ? $_POST['grid_type'] : 'report_card';
 		
-		$array = $this->parents_model->get_array_child($_POST);
-		$count = $this->parents_model->get_count();
+		if ($grid_type == 'report_card_teacher') {
+			$_POST['is_custom'] = 1;
+			$_POST['column'] = array( 'class_type_name', 'class_level_name', 'teacher_name' );
+			
+			$array_recap = $this->class_level_model->get_array_recap($_POST);
+			$array = $array_recap['array'];
+			$count = $array_recap['count'];
+		} else if ($grid_type == 'report_card') {
+			$_POST['column'] = array( 'father_name', 'mother_name', 'student_count' );
+			
+			$array = $this->parents_model->get_array_child($_POST);
+			$count = $this->parents_model->get_count();
+		}
 		
 		$grid = array( 'sEcho' => $_POST['sEcho'], 'aaData' => $array, 'iTotalRecords' => $count, 'iTotalDisplayRecords' => $count );
 		echo json_encode($grid);

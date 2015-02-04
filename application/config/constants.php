@@ -51,6 +51,7 @@ define('ATTENDANCE_ABSENCE',					'attendance_absence');
 define('ATTENDANCE_STUDENT',					'attendance_student');
 define('CALENDAR',								'calendar');
 define('CLASS_LEVEL',							'class_level');
+define('CLASS_NOTE',							'class_note');
 define('CLASS_TYPE',							'class_type');
 define('CONFIG',								'config');
 define('CRON_LOG',								'cron_log');

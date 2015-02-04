@@ -68,19 +68,41 @@
 			
 			<div class="box-grid">
 				<div class="box">
-					<h4 class="center-title">Report Card</h4>
-					<table class="table table-striped" id="grade-finalize-grid">
-						<thead>
-							<tr>
-								<th style="width: 25%;">Father Name</th>
-								<th style="width: 25%;">Mother Name</th>
-								<th style="width: 25%;">Number of Students Enrolled</th>
-								<th style="width: 25%;">Control</th>
-							</tr>
-						</thead>
-						<tbody></tbody>
-					</table>
-					<div style="padding: 15px 0 25px 0;">Grades were finalized for this class on &lt;Date and Time Stamp&gt;</div>
+					<div class="tabbable">
+						<ul class="nav nav-tabs box-wide">
+							<li class="active"><a href="#tab-parent" data-toggle="tab">Parent</a></li>
+							<li><a href="#tab-teacher" data-toggle="tab">Teacher</a></li>
+						</ul>
+						<div class="tab-content box-wide box-no-bottom-padding" style="padding-top: 15px; padding-bottom: 35px;">
+							<div class="tab-pane fade in widget-comments active" id="tab-parent">
+								<table class="table table-striped" id="grade-finalize-grid">
+									<thead>
+										<tr>
+											<th style="width: 25%;">Father Name</th>
+											<th style="width: 25%;">Mother Name</th>
+											<th style="width: 25%;">Number of Students Enrolled</th>
+											<th style="width: 25%;">Control</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+							<div class="tab-pane fade widget-threads" id="tab-teacher">
+								<table class="table table-striped" id="teacher-grid">
+									<thead>
+										<tr>
+											<th style="width: 25%;">Class</th>
+											<th style="width: 25%;">Subject</th>
+											<th style="width: 25%;">Teacher</th>
+											<th style="width: 25%;">Control</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+							<div ></div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -112,7 +134,7 @@ $(document).ready(function() {
 						$('#modal-progress').modal();
 						
 						if (result.is_complete) {
-							dt.reload();
+							dt_parent.reload();
 						} else {
 							page.report_card.generate(p);
 						}
@@ -123,11 +145,14 @@ $(document).ready(function() {
 	}
 	page.init();
 	
-	// grid
-	var param = {
+	// grid parent
+	var param_parent = {
 		id: 'grade-finalize-grid',
 		source: 'report_card/grid', aaSorting: [[ 0, "ASC" ]],
 		column: [ { }, { }, { sClass: 'center' }, { bSortable: false, sClass: 'center' } ],
+		fnServerParams: function(aoData) {
+			aoData.push( { name: 'grid_type', value: 'report_card' } );
+		},
 		init: function() {
 			$('#grade-finalize-grid_length').prepend('<div style="float: left; padding: 0 5px 0 0;" class="btn-group"><input type="button" class="btn btn-generate" value="Generate All" /><input type="button" class="btn btn-finalize" value="Finalize & Email" /></div>');
 		},
@@ -140,7 +165,7 @@ $(document).ready(function() {
 					url: web.base + 'report_card/action',
 					param: { action: 'generate_report', parent_id: record.parent_id },
 					callback: function(result) {
-						dt.reload();
+						dt_parent.reload();
 					}
 				});
 			});
@@ -162,9 +187,9 @@ $(document).ready(function() {
 			});
 		}
 	}
-	var dt = Func.datatable(param);
+	var dt_parent = Func.datatable(param_parent);
 	
-	// button
+	// button parent
 	$('.btn-generate').click(function() {
 		// reset data and generate
 		page.report_card.total = 0;
@@ -185,6 +210,34 @@ $(document).ready(function() {
 		$('#modal-progress .modal-body').html('Generating Report Card 0%');
 		$('#modal-progress').modal();
 	});
+	
+	// grid teacher
+	var param_teacher = {
+		id: 'teacher-grid',
+		source: 'report_card/grid', aaSorting: [[ 0, "ASC" ]],
+		column: [ { }, { }, { }, { bSortable: false, sClass: 'center' } ],
+		init: function() {
+			/*
+			$('#teacher-grid_length').prepend('<div style="float: left; padding: 0 5px 0 0;" class="btn-group"><input type="button" class="btn btn-generate" value="Generate All" /><input type="button" class="btn btn-finalize" value="Finalize & Email" /></div>');
+			
+			$('#tab-handbook-undone .dataTables_length').prepend(
+				'<div style="float: left; padding: 0 5px 0 0;">' +
+					'<div class="btn-group open">' +
+						'<button data-toggle="dropdown" class="btn btn-notofication dropdown-toggle" style="margin: 0px;">Send Notification <span class="caret"></span></button>' +
+						'<ul class="dropdown-menu">' +
+							'<li><a class="cursor btn-request-handbook">All Parents</a></li>' +
+							'<li><a class="cursor btn-request-handbook" data-limit="10">First 10 Parents</a></li>' +
+						'</ul>' +
+					'</div>' +
+				'</div>'
+			);
+			/*	*/
+		},
+		fnServerParams: function(aoData) {
+			aoData.push( { name: 'grid_type', value: 'report_card_teacher' } );
+		}
+	}
+	var dt_teacher = Func.datatable(param_teacher);
 });
 </script>
 

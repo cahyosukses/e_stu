@@ -12,11 +12,26 @@
 	$array_taareekh_level = $this->class_level_model->get_teacher_array(array( 'user_id' => $user['user_id'], 'taareekh' => 1 ));
 	$array_aqaid_level = $this->class_level_model->get_teacher_array(array( 'user_id' => $user['user_id'], 'aqaid' => 1 ));
 	
+	// flash message
+	$message = get_flash_message();
+	
 	// page
 	$array_page['user'] = $user;
 	$array_page['USER_TYPE_PARENT'] = USER_TYPE_PARENT;
 	$array_page['USER_TYPE_TEACHER'] = USER_TYPE_TEACHER;
 	$array_page['USER_TYPE_ADMINISTRATOR'] = USER_TYPE_ADMINISTRATOR;
+	if (!empty($_GET['class_type_id'])) {
+		$array_page['class_type_id'] = $_GET['class_type_id'];
+	}
+	if (!empty($_GET['quran_level_id'])) {
+		$array_page['quran_level_id'] = $_GET['quran_level_id'];
+	}
+	if (!empty($_GET['class_level_id'])) {
+		$array_page['class_level_id'] = $_GET['class_level_id'];
+	}
+	if (!empty($message)) {
+		$array_page['message'] = $message;
+	}
 ?>
 
 <?php echo $this->load->view( 'common/meta' ); ?>
@@ -428,6 +443,18 @@ $(document).ready(function() {
 					page.attachment.append(array_attachment[i]);
 				}
 			}
+		},
+		callback: function() {
+			// set filter
+			$('#cnt-class-filter [name="class_type"]').val(page.data.class_type_id);
+			$('#cnt-class-filter [name="class_type"]').change();
+			$('#cnt-class-filter .class-level select:visible').val(page.data.class_level_id);
+			$('#cnt-class-filter .class-level select:visible').change();
+			
+			// set message
+			if (page.data.message != null) {
+				$.notify(page.data.message, "success");
+			}
 		}
 	}
 	page.init();
@@ -708,11 +735,14 @@ $(document).ready(function() {
 				var link_grade = web.base + 'grade_finalize?class_type_id=' + page.get_filter().class_type;
 				link_grade += (page.get_filter().class_level_id == 0) ? '' : '&class_level_id=' + page.get_filter().class_level_id;
 				link_grade += (page.get_filter().quran_level_id == 0) ? '' : '&quran_level_id=' + page.get_filter().quran_level_id;
-				window.open(link_grade);
+				window.location = link_grade;
 			} else {
 				$.notify("Please select Class Level", "error");
 			}
 		});
+		
+		// page callback
+		page.callback();
 	}
 	else {
 		// grid

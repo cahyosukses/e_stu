@@ -57,6 +57,7 @@ class teacher_class_model extends CI_Model {
     function get_array($param = array()) {
         $array = array();
 		
+		$return_list_id = (isset($param['return_list_id'])) ? $param['return_list_id'] : false;
 		$string_user = (isset($param['user_id'])) ? "AND teacher_class.user_id = '".$param['user_id']."'" : '';
 		$string_class_type = (isset($param['class_type_id'])) ? "AND teacher_class.class_type_id = '".$param['class_type_id']."'" : '';
 		$string_namelike = (!empty($param['namelike'])) ? "AND name LIKE '%".$param['namelike']."%'" : '';
@@ -102,7 +103,17 @@ class teacher_class_model extends CI_Model {
 			$array[] = $this->sync($row, $param);
 		}
 		
-        return $array;
+		// set return format
+		if ($return_list_id) {
+			$result = array();
+			foreach ($array as $key => $row) {
+				$result[] = $row['class_type_id'];
+			}
+		} else {
+			$result = $array;
+		}
+		
+        return $result;
     }
 	
     function get_class_teacher($param = array()) {
