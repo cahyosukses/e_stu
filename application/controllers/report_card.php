@@ -150,10 +150,10 @@ class report_card extends SE_Login_Controller {
 					
 					// add to class info
 					if (!empty($class_teacher['quran_level_id'])) {
-						$class_info .= '- '.$class_teacher['quran_level_name']."\n";
+						$class_info .= '* '.$class_teacher['class_type_name'].' - '.$class_teacher['quran_level_name']."<br />\n";
 					}
 					if (!empty($class_teacher['class_level_id'])) {
-						$class_info .= '- '.$class_teacher['class_level_name']."\n";
+						$class_info .= '* '.$class_teacher['class_type_name'].' - '.$class_teacher['class_level_name']."<br />\n";
 					}
 				}
 				

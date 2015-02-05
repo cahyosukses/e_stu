@@ -66,9 +66,9 @@ application/models/teacher_comment_model.php
 application/models/user_model.php
 application/views/common/panel_left.php
 application/views/grade_finalize.php
-application/views/task.php
 application/views/report_card.php
 application/views/report_card_pdf.php
+application/views/task.php
 static/js/public_function.js
 note.txt
 
@@ -94,7 +94,7 @@ Link attachment below :
 	
 	
 	- CREATE TABLE IF NOT EXISTS `class_note` ( `id` int(11) NOT NULL AUTO_INCREMENT, `class_type_id` int(11) NOT NULL, `class_level_id` int(11) NOT NULL, `quran_level_id` int(11) NOT NULL, `finalize_date` datetime NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-	- INSERT INTO `student_db`.`config` (`config_id`, `config_key`, `config_value`, `config_desc`, `config_group`, `is_hidden`) VALUES (NULL, 'report-card-teacher', 'Dear Teacher,
+	- INSERT INTO `config` (`config_id`, `config_key`, `config_value`, `config_desc`, `config_group`, `is_hidden`) VALUES (NULL, 'report-card-teacher', 'Dear Teacher,
 
 You have not yet finalized the grades for the following classes:
 

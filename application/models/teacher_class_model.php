@@ -88,9 +88,10 @@ class teacher_class_model extends CI_Model {
 		$select_query = "
 			SELECT SQL_CALC_FOUND_ROWS teacher_class.*,
 				user.user_type_id, user.teacher_subject, user.user_display, user.user_email,
-				class_level.name class_level_name, quran_level.name quran_level_name
+				class_type.name class_type_name, class_level.name class_level_name, quran_level.name quran_level_name
 			FROM ".TEACHER_CLASS." teacher_class
 			LEFT JOIN ".USER." user ON user.user_id = teacher_class.user_id
+			LEFT JOIN ".CLASS_TYPE." class_type ON class_type.id = teacher_class.class_type_id
 			LEFT JOIN ".CLASS_LEVEL." class_level ON class_level.id = teacher_class.class_level_id
 			LEFT JOIN ".QURAN_LEVEL." quran_level ON quran_level.id = teacher_class.quran_level_id
 			WHERE 1 $string_namelike $string_user $string_class_type $string_quran_level $string_class_level $string_filter
