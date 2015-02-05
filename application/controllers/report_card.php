@@ -54,10 +54,19 @@ class report_card extends SE_Login_Controller {
 			$result['parent_total'] = $this->parents_model->get_count(array( 'is_query' => true ));
 			
 			// selected parent
+			$current_parent = $next_parent = '';
 			$param_parent = array( 'start' => $_POST['start'], 'limit' => 1 );
 			$array_parent = $this->parents_model->get_array($param_parent);
 			foreach ($array_parent as $row) {
+				$current_parent = $row['p_father_name'];
 				$this->parents_model->generate_report_card(array( 'parent_id' => $row['p_id'] ));
+			}
+			
+			// next parent
+			$param_next_parent = array( 'start' => $_POST['start'] + 1, 'limit' => 1 );
+			$array_next_parent = $this->parents_model->get_array($param_next_parent);
+			if (count($array_next_parent) == 1) {
+				$next_parent = $array_next_parent[0]['p_father_name'];
 			}
 			
 			// result data
@@ -80,7 +89,7 @@ class report_card extends SE_Login_Controller {
 			sleep(1);
 			$result['status'] = true;
 			$result['is_complete'] = $is_complete;
-			$result['message'] = $is_complete ? 'Generate complete' : 'Generating for parent #'.$parent_counter.' - '.$parent_percent.'%, Generating for Parent #'.($parent_counter + 1);
+			$result['message'] = $is_complete ? 'Generate complete' : 'Generating for parent '.$current_parent.' - '.$parent_percent.'%, Generating for Parent '.$next_parent;
 		}
 		else if ($action == 'email_report') {
 			$result = $this->parents_model->send_report_card($_POST);

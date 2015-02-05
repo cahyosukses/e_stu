@@ -1,54 +1,33 @@
-http://jafariaschool.org/student_test/grade_finalize?class_type_id=3&class_level_id=10
-
-On the finalize page
-the teacher should only be able to view just their subject that they are teaching not all subjects
+Can we change on the finalize screen, the subject is figh,
+can we change that to fiqh
 - done
 
-there should be a Finalize button that takes them back to the task page with the message grades finalized for class __ Subject ____
-when they click on the finalize button,
+Also can we change bad comment
+number 13 from Unacceptable Behavior to Behavior Needs Improvement
+on the ui and the report card pdf
 - done
 
-it should check if every student has atleast 1 comment added.
-If not, it should give errors that -student name-- has no comments
+On the reportcard,
+can we also change "Achievement is graded from A to F"
+to Achievement is graded with the following letter grades (A - Excellent, B - Good, S - Satisfactory N - Needs Improvement)
 - done
 
-There should also be a save and exit button, where they can come back.
-Also I feel like adding the comments is not very intuitive,
-how about if the actual text are buttons and I can add them by clicking on them,
-and then once they are added, I can click on them again to remove them
+Actually a few more things, On the processing screen,
+can we say the name of the parent rather than just parent #1?
 - done
+
+Also if a teacher takes 2 classes with the same students,
+the comments should transfer over.
+They will still have to finalize
+but shouldnt have to re-enter the comments.
+- done
+
+For example in student_test the teacher masooma farishta teaches class 10
+and the subjects of fiqh and aqaid. She needs to finalize both classes, but
+when she fills out the comments section for one class, the same comments
+should copy over
 
 ---------------------------------------------------------------------------------------------------
-
-Administrator
-
-There should be section on the administrator report card page similar to the handbook section,
-where I can see what subjects have been finalized and what subjects have not been finalized.
-So the table should look like
-- done
-
-Column :
-	- Class (Which would be the number or Quran),
-	- Subject (In the case of Quran it would say the level),
-	- Teacher,
-	- and a control to email the individual teacehr.
-- done
-
-There will also be a button to email all teachers.
-The email will look like:
-
-Dear Teacher,
-
-You have not yet finalized the grades for the following classes:
-
-List of the classes
-
-Please finalize them by February 10th, 2015
-
----------------------------------------------------------------------------------------------------
-
-Also - when I send the email, it does not have the link for the report card
-
 
 application/config/autoload.php
 application/config/constants.php

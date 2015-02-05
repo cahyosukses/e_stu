@@ -34,7 +34,31 @@ class grade_finalize extends SE_Login_Controller {
 		
 		// student
 		if ($action == 'update_comment') {
-			$result = $this->teacher_comment_model->update($_POST);
+			// update all student class with same teacher, so each teacher will always have same comment for one student from their class
+			$student = $this->student_model->get_by_id(array( 's_id' => $_POST['student_id'] ));
+			$array_teacher_class = $this->teacher_class_model->get_array(array( 'user_id' => $user['user_id'] ));
+			foreach ($array_teacher_class as $teacher_class) {
+				if ($teacher_class['class_level_id'] == $student['class_level_id'] || $teacher_class['quran_level_id'] == $student['quran_level_id']) {
+					// get record teacher comment
+					$record = $this->teacher_comment_model->get_by_id(array( 'student_id' => $student['s_id'], 'class_type_id' => $teacher_class['class_type_id'] ));
+					if (count($record) == 0) {
+						$param_insert = array(
+							'student_id' => $student['s_id'],
+							'class_type_id' => $teacher_class['class_type_id'],
+							'comment_good' => $_POST['comment_good'],
+							'comment_bad' => $_POST['comment_bad']
+						);
+						$result = $this->teacher_comment_model->update($param_insert);
+					} else {
+						$param_update = array(
+							'id' => $record['id'],
+							'comment_good' => $_POST['comment_good'],
+							'comment_bad' => $_POST['comment_bad']
+						);
+						$result = $this->teacher_comment_model->update($param_update);
+					}
+				}
+			}
 		}
 		else if ($action == 'get_teacher_comment') {
 			$result = $this->teacher_comment_model->get_by_id($_POST);

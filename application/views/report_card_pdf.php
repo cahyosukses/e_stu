@@ -185,7 +185,7 @@ a {
 	<div class="title-school">JAFARIA EDUCATION CENTER</div>
 	<div class="name"><?php echo $parent['p_father_name'].' & '.$parent['p_mother_name']; ?></div>
 	
-	<p class="text">Key: Achievement is graded from A to F. For additional comments, please refer to the following:</p>
+	<p class="text">Key: Achievement is graded with the following letter grades (A - Excellent, B - Good,<br />S - Satisfactory N - Needs Improvement). For additional comments, please refer to the following:</p>
 	
 	<table align="center">
 		<thead>
@@ -211,7 +211,7 @@ a {
 					10. Does not bring Materials<br />
 					11. Does not follow Directions<br />
 					12. Inconsistent effort<br />
-					13. Unacceptable behavior<br />
+					13. Behavior Needs Improvement<br />
 					14. Difficulty in understanding subject matter<br />
 				</td>
 			</tr>

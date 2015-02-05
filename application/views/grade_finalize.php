@@ -51,6 +51,7 @@
 	<div id="modal-comment" class="modal modal-big hide fade" tabindex="-1" role="dialog" aria-labelledby=" modal-commentLabel" aria-hidden="true">
 		<form class="form-horizontal" style="margin: 0px;">
 			<input type="hidden" name="id" value="" />
+			<input type="hidden" name="student_id" value="" />
 			<input type="hidden" name="action" value="update_comment" />
 			
 			<div class="modal-header">
@@ -82,7 +83,7 @@
 								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">10. Does not bring Materials</button><br />
 								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">11. Does not follow Directions</button><br />
 								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">12. Inconsistent effort</button><br />
-								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">13. Unacceptable behavior</button><br />
+								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">13. Behavior Needs Improvement</button><br />
 								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">14. Difficulty in understanding subject matter</button><br />
 							</td>
 						</tr>
@@ -121,7 +122,7 @@
 							<tr>
 								<th style="width: 15%;">Name</th>
 								<th style="width: 15%;">Quran</th>
-								<th style="width: 15%;">Figh</th>
+								<th style="width: 15%;">Fiqh</th>
 								<th style="width: 15%;">Akhlaq</th>
 								<th style="width: 15%;">Tareekh</th>
 								<th style="width: 15%;">Aqaid</th>
