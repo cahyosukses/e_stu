@@ -185,7 +185,7 @@ a {
 	<div class="title-school">JAFARIA EDUCATION CENTER</div>
 	<div class="name"><?php echo $parent['p_father_name'].' & '.$parent['p_mother_name']; ?></div>
 	
-	<p class="text">Key: Achievement is graded with the following letter grades (A - Excellent, B - Good,<br />S - Satisfactory N - Needs Improvement). For additional comments, please refer to the following:</p>
+	<p class="text">Key: Achievement is graded with the following letter grades (A - Excellent, B - Good,<br />S - Satisfactory, N - Needs Improvement). For additional comments, please refer to the following:</p>
 	
 	<table align="center">
 		<thead>
