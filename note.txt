@@ -33,6 +33,7 @@ application/config/autoload.php
 application/config/constants.php
 application/controllers/grade_finalize.php
 application/controllers/report_card.php
+application/controllers/task.php
 application/helpers/common_helper.php
 application/models/attendance_student_model.php
 application/models/class_level_model.php
@@ -50,6 +51,9 @@ application/views/report_card_pdf.php
 application/views/task.php
 static/js/public_function.js
 note.txt
+
+
+
 
 
 

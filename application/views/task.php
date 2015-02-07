@@ -267,6 +267,10 @@
 							<label class="control-label">Is Complete</label>
 							<div class="controls"><input type="checkbox" name="is_complete" value="1" /></div>
 						</div>
+						<div class="control-group cnt-send-mail">
+							<label class="control-label">Send Email</label>
+							<div class="controls"><input type="checkbox" name="send_mail" value="1" /></div>
+						</div>
 						<div class="control-group">
 							<div class="controls">
 								<input type="submit" class="btn btn-primary" value="Save" />
@@ -371,6 +375,14 @@ $(document).ready(function() {
 			$('.box-grid').hide();
 			$('.box-form-task').show();
 			$('.box-task-grade').hide();
+			var form_param = Func.form.get_value('form-task');
+			
+			// email
+			if (form_param.id == 0) {
+				$('#form-task .cnt-send-mail').show();
+			} else {
+				$('#form-task .cnt-send-mail').hide();
+			}
 		},
 		show_form_task_grade: function() {
 			$('.box-grid').hide();
@@ -511,7 +523,7 @@ $(document).ready(function() {
 				$('#task-grid .btn-edit').click(function() {
 					var raw_record = $(this).siblings('.hide').text();
 					eval('var record = ' + raw_record);
-					console.log(record);
+					
 					// show modal
 					Func.populate({ cnt: '#form-task', record: record });
 					page.attachment.populate({ raw_attachment: record.attachment });
@@ -588,12 +600,14 @@ $(document).ready(function() {
 		// form task
 		$('.btn-task-add').click(function() {
 			if (page.is_valid()) {
-				page.show_form_task();
-				
 				// reset form
 				$('#form-task')[0].reset();
 				$('#form-task [name="id"]').val(0);
+				$('#form-task [name="send_mail"]').prop('checked', true);
 				$('#form-task .cnt-attachment ul').html('');
+				
+				// show form
+				page.show_form_task();
 			} else {
 				$.notify("Please select Quran or Class Level", "error");
 			}

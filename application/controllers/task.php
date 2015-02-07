@@ -48,6 +48,7 @@ class task extends SE_Login_Controller {
 		if ($action == 'update') {
 			// insert or update
 			$is_insert = (empty($_POST['id'])) ? true : false;
+			$is_send_mail = (isset($_POST['send_mail']) && $_POST['send_mail'] == 1) ? true : false;
 			
 			// add user id
 			$_POST['assign_by'] = $user['user_id'];
@@ -69,7 +70,7 @@ class task extends SE_Login_Controller {
 			$result = $this->task_model->update($_POST);
 			
 			// add student
-			if ($is_insert) {
+			if ($is_insert && $is_send_mail) {
 				$param_student = array();
 				if (!empty($_POST['quran_level_id'])) {
 					$param_student['quran_level_id'] = $_POST['quran_level_id'];
