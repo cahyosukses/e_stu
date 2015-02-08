@@ -59,47 +59,49 @@
 				<h3 id="modal-commentLabel">Update Comment</h3>
 			</div>
 			<div class="modal-body">
-				<table border="1" style="width: 80%; margin: 0 auto 25px;;">
-					<thead>
-						<tr style="text-align: center; font-weight: bold;">
-							<td style="width: 50%;">Good comments</td>
-							<td style="width: 50%;">Bad comments</td>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td style="padding: 10px;">
-								<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">1. Great Work</button><br />
-								<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">2. Outstanding Student</button><br />
-								<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">3. Good Work Habits</button><br />
-								<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">4. Very Neat & Accurate work</button><br />
-								<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">5. Highly motivated</button><br />
-								<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">6. Contributes intelligently to class</button><br />
-								<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">7. Works well in group activities</button><br />
-							</td>
-							<td style="padding: 10px;">
-								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">8. Appears disorganized</button><br />
-								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">9. Quality of Work Declining</button><br />
-								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">10. Does not bring Materials</button><br />
-								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">11. Does not follow Directions</button><br />
-								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">12. Inconsistent effort</button><br />
-								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">13. Behavior Needs Improvement</button><br />
-								<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">14. Difficulty in understanding subject matter</button><br />
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div style="overflow: auto; max-height: 250px; margin: 0 0 10px 0;">
+					<table border="1" style="width: 80%; margin: 0 auto 25px;;">
+						<thead>
+							<tr style="text-align: center; font-weight: bold;">
+								<td style="width: 50%;">Good comments</td>
+								<td style="width: 50%;">Bad comments</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td style="padding: 10px;">
+									<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">1. Great Work</button><br />
+									<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">2. Outstanding Student</button><br />
+									<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">3. Good Work Habits</button><br />
+									<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">4. Very Neat & Accurate work</button><br />
+									<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">5. Highly motivated</button><br />
+									<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">6. Contributes intelligently to class</button><br />
+									<button class="btn btn-mini btn-success" type="button" style="margin-bottom: 3px;">7. Works well in group activities</button><br />
+								</td>
+								<td style="padding: 10px;">
+									<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">8. Appears disorganized</button><br />
+									<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">9. Quality of Work Declining</button><br />
+									<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">10. Does not bring Materials</button><br />
+									<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">11. Does not follow Directions</button><br />
+									<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">12. Inconsistent effort</button><br />
+									<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">13. Behavior Needs Improvement</button><br />
+									<button class="btn btn-mini btn-danger" type="button" style="margin-bottom: 3px;">14. Difficulty in understanding subject matter</button><br />
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 				
 				<div class="control-group">
 					<label class="control-label">Good</label>
 					<div class="controls">
-						<textarea name="comment_good" class="span6" placeholder="Good"></textarea>
+						<input type="text" name="comment_good" class="span6" placeholder="Good" />
 					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label">Bad</label>
 					<div class="controls">
-						<textarea name="comment_bad" class="span6" placeholder="Bad"></textarea>
+						<input type="text" name="comment_bad" class="span6" placeholder="Bad" />
 					</div>
 				</div>
 			</div>

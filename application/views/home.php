@@ -87,7 +87,9 @@
 	if ($user['user_type_id'] == USER_TYPE_ADMINISTRATOR) {
 		$param_attendance = array( 'limit' => 1 );
 		$array_attendance = $this->attendance_model->get_array($param_attendance);
-		$latest_attendance = $array_attendance[0];
+		if (count($array_attendance) > 0) {
+			$latest_attendance = $array_attendance[0];
+		}
 	}
 	
 	// page

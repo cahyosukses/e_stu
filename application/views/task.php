@@ -156,8 +156,9 @@
 							<?php echo ShowOption(array( 'Array' => $array_class_type, 'WithEmptySelect' => 0 )); ?>
 						</select>
 					</div>
-					<div class="span4">&nbsp;</div>
-					<div class="span4 center btn-group">
+					<div class="span2">&nbsp;</div>
+					<div class="span5 center btn-group">
+						<input type="button" class="btn btn-task-add" value="Add" />
 						<input type="button" class="btn btn-grade-weight" value="Grade Weights" />
 						<input type="button" class="btn btn-finalize" value="Finalize" />
 					</div>
@@ -493,7 +494,7 @@ $(document).ready(function() {
 		var param = {
 			id: 'task-grid',
 			source: 'task/grid', aaSorting: [[ 2, "DESC" ]],
-			column: [ { }, { }, { }, { }, { bSortable: false, sClass: 'center' } ],
+			column: [ { sClass: 'column-small' }, { sClass: 'column-small' }, { }, { sClass: 'column-small' }, { bSortable: false, sClass: 'center' } ],
 			fnServerParams: function(aoData) {
 				var data = page.get_filter();
 				aoData.push( { name: 'grid_type', value: 'teacher' } );
@@ -515,9 +516,6 @@ $(document).ready(function() {
 						aoData.push( { name: 'class_level_id', value: data.class_level_id } );
 					}
 				}
-			},
-			init: function() {
-				$('#task-grid_length').prepend('<div class="btn-group" style="float: left; padding: 0 5px 0 0;"><input type="button" class="btn btn-task-add" value="Add" /></div>');
 			},
 			callback: function() {
 				$('#task-grid .btn-edit').click(function() {

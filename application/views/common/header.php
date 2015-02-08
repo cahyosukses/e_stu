@@ -75,8 +75,8 @@
 							
 							<?php if ($user['user_type_id'] == USER_TYPE_ADMINISTRATOR) { ?>
 							<li class="divider"></li>
-							<li><a class="cursor btn-reset-task">Reset Task</a></li>
-							<li><a class="cursor btn-reset-attendance">Reset Attendance</a></li>
+							<!-- <li><a class="cursor btn-reset-task">Reset Task</a></li> -->
+							<!-- <li><a class="cursor btn-reset-attendance">Reset Attendance</a></li> -->
 							<li><a href="<?php echo base_url('setup_account'); ?>">Setup Account</a></li>
 							<?php } ?>
 							
