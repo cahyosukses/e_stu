@@ -1,101 +1,46 @@
-Can we change on the finalize screen, the subject is figh,
-can we change that to fiqh
-- done
+1. For the quran checklist,
+it is set to "is complete" even before it is due so the child's grade is lower
+even before the parent has had a chance to complete the checklist.
+Can we make it so the "is complete" is done on the due date and not before?
+- ditable task (SELECT * FROM `task` WHERE `title` LIKE '%Weekly Quran Checklist Week%' LIMIT 0 , 30)
 
-Also can we change bad comment
-number 13 from Unacceptable Behavior to Behavior Needs Improvement
-on the ui and the report card pdf
-- done
+2. If a task is not marked complete,
+can we show that in the task section for both parents and teachers as "Not Graded" Currently it has just a zero
+because there has been no grade and parents s start panicking
+- untuk teacher, di dashboard dikasih info "Not Graded"
+- untuk parent, di task section dikasih info "Not Graded"
 
-On the reportcard,
-can we also change "Achievement is graded from A to F"
-to Achievement is graded with the following letter grades (A - Excellent, B - Good, S - Satisfactory N - Needs Improvement)
-- done
+3. I dont see the link to the config page on the administrator dashboard
 
-Actually a few more things, On the processing screen,
-can we say the name of the parent rather than just parent #1?
-- done
+Also - We are having a parent teacher conference next week
+and I was wondering if we can make a scheduling system.
+For example, it will be a page (does not have to be on the dashboard)
+that will have some criteria like :
 
-Also if a teacher takes 2 classes with the same students,
-the comments should transfer over.
-They will still have to finalize
-but shouldnt have to re-enter the comments.
-- done
+Timeframe of the Event:
+Time a Teacher is busy:
+Length of time of a parent with each student:
 
-For example in student_test the teacher masooma farishta teaches class 10
-and the subjects of fiqh and aqaid. She needs to finalize both classes, but
-when she fills out the comments section for one class, the same comments
-should copy over
+and with that we can generate a schedule where every parent can talk to the teacher of their students.
+The goal is to make it so the parents dont have to stay for a long time
+and can talk to all the teachers at once
+and be done rather than having a meeting in the morning
+and then the next meeting be in the afternoon
 
----------------------------------------------------------------------------------------------------
+For Example:
 
-application/config/autoload.php
-application/config/constants.php
-application/controllers/grade_finalize.php
-application/controllers/report_card.php
-application/controllers/task.php
-application/helpers/common_helper.php
-application/models/attendance_student_model.php
-application/models/class_level_model.php
-application/models/class_note_model.php
-application/models/parents_model.php
-application/models/student_model.php
-application/models/task_model.php
-application/models/teacher_class_model.php
-application/models/teacher_comment_model.php
-application/models/user_model.php
-application/views/common/panel_left.php
-application/views/grade_finalize.php
-application/views/report_card.php
-application/views/report_card_pdf.php
-application/views/task.php
-static/js/public_function.js
-note.txt
+Timeframe of the Event: 10:30 AM - 3PM
+Time a Teacher is busy: Taha Dharsi 11:30 - 3:00
+Length of time of a parent with each student: 10 minutes
 
+With that we will schedule time for the parents
+where each parent will meet with the teacher of their students for 10 minutes each.
 
+The interface would look like this
 
+The columns would be Time Frame, Father Name, Mother Name, Teacher
 
-
-
-
-
-
-
-
-
-update sql :
-	- CREATE TABLE IF NOT EXISTS `teacher_comment` ( `id` int(11) NOT NULL AUTO_INCREMENT, `student_id` int(11) NOT NULL, `class_type_id` int(11) NOT NULL, `comment` varchar(255) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-	- ALTER TABLE `teacher_comment` CHANGE `comment` `comment_good` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL;
-	- ALTER TABLE `parents` ADD `report_card` VARCHAR( 50 ) NOT NULL ;
-	- INSERT INTO `config` (`config_id`, `config_key`, `config_value`, `config_desc`, `config_group`, `is_hidden`) VALUES (NULL, 'report-card-email', 'Dear -parent_name-,
-
-Report Card Email, please update via Config Module
-
-Link attachment below :
--link_report_card-', 'Report Card Email', '0', '0');
-	- INSERT INTO `config` (`config_id`, `config_key`, `config_value`, `config_desc`, `config_group`, `is_hidden`) VALUES (NULL, 'report-card-finalize', '', 'Report Card Finalize', '0', '1');
-	
-	
-	- CREATE TABLE IF NOT EXISTS `class_note` ( `id` int(11) NOT NULL AUTO_INCREMENT, `class_type_id` int(11) NOT NULL, `class_level_id` int(11) NOT NULL, `quran_level_id` int(11) NOT NULL, `finalize_date` datetime NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-	- INSERT INTO `config` (`config_id`, `config_key`, `config_value`, `config_desc`, `config_group`, `is_hidden`) VALUES (NULL, 'report-card-teacher', 'Dear Teacher,
-
-You have not yet finalized the grades for the following classes:
-
--list_of_the_classes-
-
-Please finalize them by February 10th, 2015', 'Report Card Teacher', '0', '');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+There will be a button
+where we could email each parent and let them know of their schedule
+and also email each teacher and let them know of their schedule as well
 
