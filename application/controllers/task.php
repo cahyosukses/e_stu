@@ -16,14 +16,14 @@ class task extends SE_Login_Controller {
 			$_POST['is_custom']  = '<span class="cursor-font-awesome icon-pencil btn-edit" title="Edit"></span> ';
 			$_POST['is_custom'] .= '<span class="cursor-font-awesome icon-plus-sign-alt btn-update-score" title="Update Grade"></span> ';
 			$_POST['is_custom'] .= '<span class="cursor-font-awesome icon-trash btn-delete" title="Delete"></span> ';
-			$_POST['column'] = array( 'task_type_name', 'user_display', 'title', 'due_date_swap' );
+			$_POST['column'] = array( 'task_type_name', 'user_display', 'title', 'complete_title', 'due_date_swap' );
 			
 			$array = $this->task_model->get_array($_POST);
 			$count = $this->task_model->get_count();
 		}
 		else if ($grid_type == 'parent') {
 			$_POST['is_detail'] = 1;
-			$_POST['column'] = array( 'class_type_name', 'task_type_name', 'task_title', 'task_due_date_swap', 'grade' );
+			$_POST['column'] = array( 'class_type_name', 'task_type_name', 'task_title', 'task_due_date_swap', 'label_grade' );
 			
 			$array = $this->task_class_model->get_array($_POST);
 			$count = $this->task_class_model->get_count();

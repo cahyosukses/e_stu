@@ -67,6 +67,7 @@ class task_class_model extends CI_Model {
         $array = array();
 		
 		$param['field_replace']['task_title'] = 'task.title';
+		$param['field_replace']['label_grade'] = '';
 		$param['field_replace']['task_due_date'] = 'task.due_date';
 		$param['field_replace']['task_type_name'] = 'task_type.name';
 		$param['field_replace']['class_type_name'] = 'class_type.name';
@@ -82,7 +83,7 @@ class task_class_model extends CI_Model {
 		
 		$select_query = "
 			SELECT SQL_CALC_FOUND_ROWS task_class.*,
-				task.title task_title, task.content task_content, task.due_date task_due_date,
+				task.title task_title, task.content task_content, task.due_date task_due_date, task.is_complete task_is_complete,
 				student.s_name, user.user_display, user.teacher_subject, task_type.name task_type_name, class_type.name class_type_name
 			FROM ".TASK_CLASS." task_class
 			LEFT JOIN ".TASK." task ON task.id = task_class.task_id
@@ -130,6 +131,14 @@ class task_class_model extends CI_Model {
 		if (isset($row['task_due_date'])) {
 			$row['label_alert'] = $this->get_label_alert($row);
 			$row['task_due_date_swap'] = ExchangeFormatDate($row['task_due_date']);
+		}
+		
+		// label grade
+		if (isset($row['task_is_complete'])) {
+			$row['label_grade'] = $row['grade'];
+			if (empty($row['task_is_complete'])) {
+				$row['label_grade'] = 'Not Graded';
+			}
 		}
 		
 		if (count(@$param['column']) > 0) {

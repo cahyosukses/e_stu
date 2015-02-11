@@ -66,6 +66,7 @@ class task_model extends CI_Model {
         $array = array();
 		
 		$param['field_replace']['due_date_swap'] = 'task.due_date';
+		$param['field_replace']['complete_title'] = '';
 		$param['field_replace']['task_type_name'] = 'task_type.name';
 		
 		$string_assign = (isset($param['assign_by'])) ? "AND task.assign_by = '".$param['assign_by']."'" : '';
@@ -200,6 +201,9 @@ class task_model extends CI_Model {
 		if (isset($row['content'])) {
 			$row['task_content'] = $row['content'];
 		}
+		if (isset($row['is_complete'])) {
+			$row['complete_title'] = ($row['is_complete'] == 1) ? 'Yes' : 'No';
+		}
 		
 		// label alert
 		$row['label_alert'] = '';
@@ -215,7 +219,29 @@ class task_model extends CI_Model {
 		return $row;
 	}
 	
+	function set_complete($param = array()) {
+		$update_query  = "
+			UPDATE ".TASK."
+			SET is_complete = '1'
+			WHERE
+				task_type_id = '".$param['task_type_id']."'
+				AND class_type_id = '".$param['class_type_id']."'
+				AND due_date <= '".$param['due_date']."'
+				AND title LIKE '%".$param['title']."%'
+		";
+        $update_result = mysql_query($update_query) or die(mysql_error());
+	}
+	
 	function generate_quran_task() {
+		// mark as complete old task
+		$param_update = array(
+			'task_type_id' => TASK_TYPE_HOMEWORK,
+			'class_type_id' => CLASS_TYPE_QURAN,
+			'due_date' => $this->config->item('current_date'),
+			'title' => 'Weekly Quran Checklist Week'
+		);
+		$this->task_model->set_complete($param_update);
+		
 		// only generate until end juli 2015
 		$limit_time = ConvertToUnixTime(date("2015-08-01"));
 		$current_time = ConvertToUnixTime($this->config->item('current_datetime'));

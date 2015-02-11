@@ -216,8 +216,9 @@
 								<th style="width: 15%;">Task Type</th>
 								<th style="width: 15%;">Assign By</th>
 								<th>Title</th>
-								<th style="width: 15%;">Due Date</th>
-								<th style="width: 15%;">Control</th>
+								<th style="width: 10%;">Complete</th>
+								<th style="width: 10%;">Due Date</th>
+								<th style="width: 10%;">Control</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -494,7 +495,7 @@ $(document).ready(function() {
 		var param = {
 			id: 'task-grid',
 			source: 'task/grid', aaSorting: [[ 2, "DESC" ]],
-			column: [ { sClass: 'column-small' }, { sClass: 'column-small' }, { }, { sClass: 'column-small' }, { bSortable: false, sClass: 'center' } ],
+			column: [ { sClass: 'column-small' }, { sClass: 'column-small' }, { }, { sClass: 'column-small center' }, { sClass: 'column-small center' }, { bSortable: false, sClass: 'center' } ],
 			fnServerParams: function(aoData) {
 				var data = page.get_filter();
 				aoData.push( { name: 'grid_type', value: 'teacher' } );
@@ -782,6 +783,9 @@ $(document).ready(function() {
 					eval('var record = ' + raw_record);
 					
 					// show modal
+					if (record.task_is_complete == 0) {
+						record.grade = '';
+					}
 					Func.populate({ cnt: '#modal-task-detail', record: record });
 					$('#modal-task-detail').modal();
 				});
