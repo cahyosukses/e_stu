@@ -772,7 +772,7 @@ $(document).ready(function() {
 		var param = {
 			id: 'task-grid',
 			source: 'task/grid', aaSorting: [[ 3, "DESC" ]],
-			column: [ { }, { }, { }, { }, { }, { sClass: 'center' } ],
+			column: [ { }, { }, { }, { }, { sClass: 'center' }, { sClass: 'center' } ],
 			fnServerParams: function(aoData) {
 				aoData.push( { name: 'grid_type', value: 'parent' } );
 				aoData.push( { name: 'student_id', value: page.data.user.student_id } );

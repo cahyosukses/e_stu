@@ -290,7 +290,7 @@ class task_model extends CI_Model {
 				'title' => $task_title,
 				'content' => '-',
 				'due_date' => add_date($date_sunday, '1 weeks'),
-				'is_complete' => 1
+				'is_complete' => 0
 			);
 			$result_task = $this->task_model->update($param_task);
 			$task = $this->task_model->get_by_id(array( 'id' => $result_task['id'] ));
