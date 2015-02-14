@@ -54,7 +54,7 @@ if (! function_exists('ShowOption')) {
 		$Selected = '';
 		if ($Param['OptAll']) {
 			$Selected = ($Param['Selected'] == '0') ? 'selected' : '';
-			$Content .= '<option value="0" ' . $Selected . '>Semua</option>';
+			$Content .= '<option value="0" ' . $Selected . '>All</option>';
 		}
 		
 		foreach ($Param['Array'] as $Array) {

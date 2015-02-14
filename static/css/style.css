@@ -21,6 +21,7 @@ a { text-decoration: none; }
 
 /* jquery validate */
 label.error { margin: 5px 0 0 0; color: #b85355; }
+.datepicker label.error, .bootstrap-timepicker label.error { position: absolute; margin: 0px; }
 
 /* notify js */
 .notifyjs-corner { margin: 50px 25px 0 0 !important; }

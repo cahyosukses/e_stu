@@ -1,20 +1,3 @@
-1. For the quran checklist,
-it is set to "is complete" even before it is due so the child's grade is lower
-even before the parent has had a chance to complete the checklist.
-Can we make it so the "is complete" is done on the due date and not before?
-- ok done, now "is complete" will set "1" on the due date
-
-2. If a task is not marked complete,
-can we show that in the task section for both parents and teachers as "Not Graded" Currently it has just a zero
-because there has been no grade and parents s start panicking
-- ok done
-
-3. I dont see the link to the config page on the administrator dashboard
-- please see my attachment, to go config page you need click at "Master" and then "Config"
-
-
-About scheduling system, i am still working and i will inform you soon
-
 Also - We are having a parent teacher conference next week
 and I was wondering if we can make a scheduling system.
 For example, it will be a page (does not have to be on the dashboard)
@@ -47,3 +30,26 @@ There will be a button
 where we could email each parent and let them know of their schedule
 and also email each teacher and let them know of their schedule as well
 
+---------------------------------------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `schedule` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `parent_id` int(11) NOT NULL,
+  `time_frame` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+
+application/config/autoload.php
+application/config/constants.php
+application/controllers/schedule.php
+application/helpers/common_helper.php
+application/helpers/date_helper.php
+application/models/parents_model.php
+application/models/schedule_model.php
+application/models/user_model.php
+application/views/common/panel_left.php
+application/views/schedule.php
+note.txt
+static/css/style.css

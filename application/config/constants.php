@@ -63,6 +63,7 @@ define('PARENTS',								'parents');
 define('QURAN_LEVEL',							'quran_level');
 define('SMS',									'sms');
 define('STUDENT',								'students');
+define('SCHEDULE',								'schedule');
 define('TASK',									'task');
 define('TASK_TYPE',								'task_type');
 define('TASK_CLASS',							'task_class');

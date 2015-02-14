@@ -89,15 +89,21 @@ class parents_model extends CI_Model {
 		
 		$string_namelike = (!empty($param['namelike'])) ? "AND parents.p_father_name LIKE '%".$param['namelike']."%'" : '';
 		$string_parent = (isset($param['parent_id'])) ? "AND parents.p_id = '".$param['parent_id']."'" : '';
+		$string_quran_level_in = (isset($param['quran_level_in'])) ? "AND student.quran_level_id IN (".$param['quran_level_in'].")" : '';
+		$string_class_level_in = (isset($param['class_level_in'])) ? "AND student.class_level_id IN (".$param['class_level_in'].")" : '';
 		$string_filter = GetStringFilter($param, @$param['column']);
 		$string_sorting = GetStringSorting($param, @$param['column'], 'parents.p_id ASC');
 		$string_limit = GetStringLimit($param);
 		
 		$select_query = "
-			SELECT SQL_CALC_FOUND_ROWS parents.p_id parent_id, p_father_name father_name, p_mother_name mother_name, p_father_email, p_mother_email, report_card, COUNT(*) AS student_count
+			SELECT SQL_CALC_FOUND_ROWS parents.p_id parent_id, p_father_name father_name, p_mother_name mother_name,
+				p_father_email, p_mother_email, report_card, COUNT(*) AS student_count
 			FROM ".PARENTS." parents
 			LEFT JOIN ".STUDENT." student ON student.s_parent_id = parents.p_id
-			WHERE 1 $string_namelike $string_parent $string_filter
+			WHERE 1
+				$string_namelike $string_parent
+				$string_quran_level_in $string_class_level_in
+				$string_filter
 			GROUP BY parents.p_id
 			ORDER BY $string_sorting
 			LIMIT $string_limit

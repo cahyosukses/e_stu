@@ -83,6 +83,7 @@ class user_model extends CI_Model {
 		$param['field_replace']['user_type_title'] = 'user_type.title';
 		
 		$string_namelike = (!empty($param['namelike'])) ? "AND user.email LIKE '%".$param['namelike']."%'" : '';
+		$string_user = (!empty($param['user_id'])) ? "AND user.user_id = '".$param['user_id']."'" : '';
 		$string_user_type = (!empty($param['user_type_id'])) ? "AND user.user_type_id = '".$param['user_type_id']."'" : '';
 		$string_user_id_in = (isset($param['user_id_in'])) ? "AND user.user_id IN (".$param['user_id_in'].")" : '';
 		$string_user_type_in = (isset($param['user_type_id_in'])) ? "AND user.user_type_id IN (".$param['user_type_id_in'].")" : '';
@@ -128,7 +129,7 @@ class user_model extends CI_Model {
 			SELECT SQL_CALC_FOUND_ROWS user.*, user_type.title user_type_title
 			FROM ".USER." user
 			LEFT JOIN ".USER_TYPE." user_type ON user_type.id = user.user_type_id
-			WHERE 1 $string_namelike $string_user_type $string_user_id_in $string_user_type_in $string_teacher_class $string_filter
+			WHERE 1 $string_namelike $string_user $string_user_type $string_user_id_in $string_user_type_in $string_teacher_class $string_filter
 			ORDER BY $string_sorting
 			LIMIT $string_limit
 		";

@@ -182,10 +182,12 @@ if (! function_exists('show_time_diff')) {
 }
 
 if (! function_exists('add_date')) {
-	function add_date($date, $date_count) {
+	function add_date($date, $date_count, $param = array()) {
+		$param['date_format'] = (isset($param['date_format'])) ? $param['date_format'] : 'Y-m-d';
+		
 		$temp_date = date_create($date);
 		date_add($temp_date, date_interval_create_from_date_string($date_count));
-		$result = date_format($temp_date, 'Y-m-d');
+		$result = date_format($temp_date, $param['date_format']);
 		
 		return $result;
 	}
