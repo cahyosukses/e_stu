@@ -1,5 +1,6 @@
 <?php
-	$array_teacher = $this->user_model->get_array(array( 'user_type_id' => USER_TYPE_TEACHER, 'limit' => 50 ));
+	$array_teacher = $this->user_model->get_array(array( 'user_type_id' => USER_TYPE_TEACHER, 'limit' => 100 ));
+	$array_parent = $this->parents_model->get_array(array( 'limit' => 100 ));
 ?>
 
 <?php echo $this->load->view( 'common/meta' ); ?>
@@ -7,7 +8,7 @@
 	<?php echo $this->load->view( 'common/header' ); ?>
 	<?php echo $this->load->view( 'common/panel_left' ); ?>
 	
-	<div id="modal-schedule" class="modal modal-big hide fade" tabindex="-1" role="dialog" aria-labelledby="modal-scheduleLabel" aria-hidden="true">
+	<div id="modal-schedule" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modal-scheduleLabel" aria-hidden="true">
 		<form class="form-horizontal" style="margin: 0px;">
 			<input type="hidden" name="id" />
 			<div class="modal-header">
@@ -40,6 +41,56 @@
 		</form>
 	</div>
 	
+	<div id="modal-teacher" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modal-teachereLabel" aria-hidden="true">
+		<form class="form-horizontal" style="margin: 0px;">
+			<input type="hidden" name="action" value="mail_teacher" />
+			
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 id="modal-teachereLabel">Mail Teacher</h3>
+			</div>
+			<div class="modal-body">
+				<div class="control-group">
+					<label class="control-label">Teacher</label>
+					<div class="controls">
+						<select name="user_id" class="span3">
+							<?php echo ShowOption(array( 'Array' => $array_teacher, 'ArrayID' => 'user_id', 'ArrayTitle' => 'user_display', 'OptAll' => true )); ?>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="submit" class="btn btn-primary" value="Send" />
+				<input type="button" class="btn" data-dismiss="modal" value="Close" />
+			</div>
+		</form>
+	</div>
+	
+	<div id="modal-parent" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modal-parenteLabel" aria-hidden="true">
+		<form class="form-horizontal" style="margin: 0px;">
+			<input type="hidden" name="action" value="mail_parent" />
+			
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 id="modal-parenteLabel">Mail Parent</h3>
+			</div>
+			<div class="modal-body">
+				<div class="control-group">
+					<label class="control-label">Parent</label>
+					<div class="controls">
+						<select name="p_id" class="span3">
+							<?php echo ShowOption(array( 'Array' => $array_parent, 'ArrayID' => 'p_id', 'ArrayTitle' => 'p_father_name', 'OptAll' => true )); ?>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="submit" class="btn btn-primary" value="Send" />
+				<input type="button" class="btn" data-dismiss="modal" value="Close" />
+			</div>
+		</form>
+	</div>
+	
 	<section class="container">
 		<section class="row-fluid">
 			<h3 class="box-header">Schedule</h3>
@@ -50,11 +101,12 @@
 					<table class="table table-striped" id="schedule-grid">
 						<thead>
 							<tr>
-								<th style="width: 20%;">Time Frame</th>
-								<th style="width: 20%;">Father Name</th>
-								<th style="width: 20%;">Mother Name</th>
-								<th style="width: 20%;">Teacher</th>
-								<th style="width: 20%;">Control</th>
+								<th style="width: 15%;">Time Frame</th>
+								<th style="width: 15%;">Father Name</th>
+								<th style="width: 15%;">Mother Name</th>
+								<th style="width: 15%;">Teacher</th>
+								<th style="width: 25%;">Student</th>
+								<th style="width: 15%;">Control</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -100,7 +152,7 @@
 							<label class="control-label">Select a Teacher</label>
 							<div class="controls">
 								<select name="user_id" class="span8">
-									<?php echo ShowOption(array( 'Array' => $array_teacher, 'ArrayID' => 'user_id', 'ArrayTitle' => 'user_display' )); ?>
+									<?php echo ShowOption(array( 'Array' => $array_teacher, 'ArrayID' => 'user_id', 'ArrayTitle' => 'user_display', 'OptAll' => true )); ?>
 								</select>
 							</div>
 						</div>
@@ -158,9 +210,28 @@ $(document).ready(function() {
 	var param = {
 		id: 'schedule-grid',
 		source: web.base + 'schedule/grid', aaSorting: [[ 0, "ASC" ]],
-		column: [ { }, { }, { }, { }, { bSortable: false, sClass: 'center' } ],
+		column: [ { }, { }, { }, { }, { bSortable: false }, { bSortable: false, sClass: 'center' } ],
 		init: function() {
-			$('#schedule-grid_length').prepend('<div style="float: left; padding: 0 5px 0 0;"><input type="button" class="btn box-schedule-generate" value="Generate" /></div>');
+			$('#schedule-grid_length').prepend(
+				'<div style="float: left; padding: 0 5px 0 0;">' +
+					'<button class="btn box-schedule-generate" style="margin: 0px 5px 0px 0px;">Generate</button>' +
+					'<div class="btn-group">' +
+						'<button data-toggle="dropdown" class="btn btn-notofication dropdown-toggle" style="margin: 0px;">Send Mail <span class="caret"></span></button>' +
+						'<ul class="dropdown-menu">' +
+							'<li><a class="cursor btn-mail-parent">Parent</a></li>' +
+							'<li><a class="cursor btn-mail-teacher">Teacher</a></li>' +
+						'</ul>' +
+					'</div>' +
+				'</div>'
+			);
+			
+			//  init button
+			$('.btn-mail-parent').click(function() {
+				$('#modal-parent').modal();
+			});
+			$('.btn-mail-teacher').click(function() {
+				$('#modal-teacher').modal();
+			});
 		},
 		callback: function() {
 			$('#schedule-grid .btn-edit').click(function() {
@@ -220,6 +291,7 @@ $(document).ready(function() {
 		
 		// ajax request
 		var param = Func.form.get_value('form-schedule');
+		$('#form-schedule [type="submit"]').attr('disabled', true);
 		Func.form.submit({
 			url: web.base + 'schedule/action',
 			param: param,
@@ -227,6 +299,59 @@ $(document).ready(function() {
 				dt.reload();
 				page.show_grid();
 				$('#form-schedule')[0].reset();
+				$('#form-schedule [type="submit"]').attr('disabled', false);
+			}
+		});
+	});
+	
+	// modal parent
+	$('#modal-parent form').validate({
+		rules: {
+			p_id: { required: true }
+		}
+	});
+	$('#modal-parent form').submit(function(e) {
+		e.preventDefault();
+		if (! $('#modal-parent form').valid()) {
+			return false;
+		}
+		
+		// ajax request
+		var param = Func.form.get_value('modal-parent form');
+		$('#modal-parent [type="submit"]').attr('disabled', true);
+		Func.form.submit({
+			url: web.base + 'schedule/action',
+			param: param,
+			callback: function(result) {
+				$('#modal-parent form')[0].reset();
+				$('#modal-parent [type="submit"]').attr('disabled', false);
+				$('#modal-parent').modal('hide');
+			}
+		});
+	});
+	
+	// modal parent
+	$('#modal-teacher form').validate({
+		rules: {
+			user_id: { required: true }
+		}
+	});
+	$('#modal-teacher form').submit(function(e) {
+		e.preventDefault();
+		if (! $('#modal-teacher form').valid()) {
+			return false;
+		}
+		
+		// ajax request
+		var param = Func.form.get_value('modal-teacher form');
+		$('#form-mail [type="submit"]').attr('disabled', true);
+		Func.form.submit({
+			url: web.base + 'schedule/action',
+			param: param,
+			callback: function(result) {
+				$('#modal-teacher form')[0].reset();
+				$('#modal-teacher [type="submit"]').attr('disabled', false);
+				$('#modal-teacher').modal('hide');
 			}
 		});
 	});

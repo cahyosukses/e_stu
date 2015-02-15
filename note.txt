@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `schedule` (
 
 application/config/autoload.php
 application/config/constants.php
+
 application/controllers/schedule.php
 application/helpers/common_helper.php
 application/helpers/date_helper.php
@@ -51,5 +52,9 @@ application/models/schedule_model.php
 application/models/user_model.php
 application/views/common/panel_left.php
 application/views/schedule.php
+
 note.txt
 static/css/style.css
+
+
+

@@ -59,6 +59,7 @@ class parents_model extends CI_Model {
     function get_array($param = array()) {
         $array = array();
 		
+		$string_id = (!empty($param['p_id'])) ? "AND parents.p_id = '".$param['p_id']."'" : '';
 		$string_namelike = (!empty($param['namelike'])) ? "AND parents.p_father_name LIKE '%".$param['namelike']."%'" : '';
 		$string_filter = GetStringFilter($param, @$param['column']);
 		$string_sorting = GetStringSorting($param, @$param['column'], 'parents.p_father_name ASC');
@@ -67,7 +68,7 @@ class parents_model extends CI_Model {
 		$select_query = "
 			SELECT SQL_CALC_FOUND_ROWS parents.*
 			FROM ".PARENTS." parents
-			WHERE 1 $string_namelike $string_filter
+			WHERE 1 $string_id $string_namelike $string_filter
 			ORDER BY $string_sorting
 			LIMIT $string_limit
 		";
