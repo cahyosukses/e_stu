@@ -54,6 +54,7 @@ class schedule_model extends CI_Model {
 		
 		$string_user = (!empty($param['user_id'])) ? "AND schedule.user_id = '".$param['user_id']."'" : '';
 		$string_parent = (isset($param['parent_id'])) ? "AND schedule.parent_id = '".$param['parent_id']."'" : '';
+		$string_parent_not_in = (isset($param['parent_not_in'])) ? "AND schedule.parent_id NOT IN (".$param['parent_not_in'].")" : '';
 		$string_time_frame = (isset($param['time_frame'])) ? "AND schedule.time_frame = '".$param['time_frame']."'" : '';
 		$string_time_frame_min = (isset($param['time_frame_min'])) ? "AND schedule.time_frame >= '".$param['time_frame_min']."'" : '';
 		$string_filter = GetStringFilter($param, @$param['column']);
@@ -74,7 +75,7 @@ class schedule_model extends CI_Model {
 			FROM ".SCHEDULE." schedule
 			LEFT JOIN ".USER." user ON schedule.user_id = user.user_id
 			LEFT JOIN ".PARENTS." parents ON schedule.parent_id = parents.p_id
-			WHERE 1 $string_user $string_parent $string_time_frame $string_time_frame_min $string_filter
+			WHERE 1 $string_user $string_parent $string_parent_not_in $string_time_frame $string_time_frame_min $string_filter
 			ORDER BY $string_sorting
 			LIMIT $string_limit
 		";
@@ -97,6 +98,10 @@ class schedule_model extends CI_Model {
 		// remove teacher with schedule
 		$result = array();
 		foreach ($array_teacher as $teacher) {
+			if (empty($teacher['user_display'])) {
+				continue;
+			}
+			
 			$schedule_exist = false;
 			$count_schedule_left = $this->schedule_model->get_count(array( 'query_type' => 'schedule_left', 'user_id' => $teacher['user_id'] ));
 			foreach ($array_teacher_schedule as $schedule) {

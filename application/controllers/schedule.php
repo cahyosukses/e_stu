@@ -162,6 +162,7 @@ class schedule extends SE_Login_Controller {
 			foreach ($array_teacher as $key => $teacher) {
 				$param_schedule = array(
 					'user_id' => $teacher['user_id'],
+					'parent_not_in' => 0,
 					'time_frame_min' => $this->config->item('current_date'),
 					'sort' => '[{"property":"time_frame","direction":"ASC"}]'
 				);
@@ -174,22 +175,24 @@ class schedule extends SE_Login_Controller {
 			}
 			
 			#region sent mail
-				foreach ($array_teacher as $key => $teacher) {
-					// generate table
-					$table_schedule = '<table style="min-width: 500px;" border="1"><tr><td style="width: 20%;">Time Frame</td><td style="width: 20%;">Father</td><td style="width: 20%;">Mother</td><td style="width: 40%;">Student</td></tr>';
-					foreach ($teacher['array_schedule'] as $schedule) {
-						$table_schedule .= '<tr><td>'.$schedule['time_frame_title'].'</td><td>'.$schedule['father_name'].'</td><td>'.$schedule['mother_name'].'</td><td>'.$schedule['student_name'].'</td></tr>';
-					}
-					$table_schedule .= '</table>';
-					
-					// add email
-					$array_to[] = array(
-						'name' => $teacher['user_display'],
-						'email' => strtolower($teacher['user_email'])
-					);
-					$array_sub['-list_schedule-'][] = $table_schedule;
+			$array_to = $array_sub = array();
+			foreach ($array_teacher as $key => $teacher) {
+				// generate table
+				$table_schedule = '<table style="min-width: 500px;" border="1"><tr><td style="width: 20%;">Time Frame</td><td style="width: 20%;">Father</td><td style="width: 20%;">Mother</td><td style="width: 40%;">Student</td></tr>';
+				foreach ($teacher['array_schedule'] as $schedule) {
+					$table_schedule .= '<tr><td>'.$schedule['time_frame_title'].'</td><td>'.$schedule['father_name'].'</td><td>'.$schedule['mother_name'].'</td><td>'.$schedule['student_name'].'</td></tr>';
 				}
+				$table_schedule .= '</table>';
 				
+				// add email
+				$array_to[] = array(
+					'name' => $teacher['user_display'],
+					'email' => strtolower($teacher['user_email'])
+				);
+				$array_sub['-list_schedule-'][] = $table_schedule;
+			}
+			
+			if (count($array_to) > 0) {
 				// get content parent
 				$content = $this->config_model->get_by_id(array( 'config_key' => 'schedule-email-teacher' ));
 				
@@ -204,6 +207,7 @@ class schedule extends SE_Login_Controller {
 					'title' => $user_type['title']
 				);
 				$this->mail_model->sent_grid($param_mail);
+			}
 			#endregion sent mail
 			
             $result['status'] = '1';

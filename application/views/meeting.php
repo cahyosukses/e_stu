@@ -22,7 +22,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<input type="submit" class="btn btn-primary" value="Send" />
+				<input type="submit" class="btn btn-primary" value="Save" />
 				<input type="button" class="btn" data-dismiss="modal" value="Close" />
 			</div>
 		</form>
