@@ -18,7 +18,9 @@ we can get rid of the fee tab for now
 Also on the parent's page,
 There is a column for student name and teacher,
 can we also add a column for subject?
-
+- sorry, i cannot add colomn there
+because if we add column can be more than one student there
+so i make it at student column, please review
 
 application/helpers/date_helper.php
 application/models/schedule_model.php
