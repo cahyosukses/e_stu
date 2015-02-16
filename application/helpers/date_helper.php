@@ -101,6 +101,8 @@ if (! function_exists('ExchangeFormatDate')) {
 			return '';
 		}
 		
+		return get_format_date($Date, array( 'date_format' => 'm-d-Y h:i A' ));
+		
 		// check time
 		$array_check = explode(' ', $Date);
 		if (count($array_check) == 2) {

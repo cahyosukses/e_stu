@@ -62,16 +62,16 @@ class schedule_model extends CI_Model {
 		$string_limit = GetStringLimit($param);
 		
 		$select_query = "
-			SELECT SQL_CALC_FOUND_ROWS schedule.*, user.user_display, parents.p_father_name father_name, parents.p_mother_name mother_name,
-				(
-					SELECT GROUP_CONCAT(DISTINCT s_name ORDER BY s_name ASC SEPARATOR ', ')
-					FROM ".STUDENT." student
-					LEFT JOIN teacher_class quran_level ON quran_level.quran_level_id = student.quran_level_id
-					LEFT JOIN teacher_class class_level ON class_level.class_level_id = student.class_level_id
-					WHERE
-						student.s_parent_id = parents.p_id
-						AND (quran_level.user_id = user.user_id OR class_level.user_id = user.user_id)
-				) student_name
+			SELECT SQL_CALC_FOUND_ROWS schedule.*, user.user_display, parents.p_father_name father_name, parents.p_mother_name mother_name
+--				, (
+--					SELECT GROUP_CONCAT(DISTINCT s_name ORDER BY s_name ASC SEPARATOR ', ')
+--					FROM ".STUDENT." student
+--					LEFT JOIN teacher_class quran_level ON quran_level.quran_level_id = student.quran_level_id
+--					LEFT JOIN teacher_class class_level ON class_level.class_level_id = student.class_level_id
+--					WHERE
+--						student.s_parent_id = parents.p_id
+--						AND (quran_level.user_id = user.user_id OR class_level.user_id = user.user_id)
+--				) student_name
 			FROM ".SCHEDULE." schedule
 			LEFT JOIN ".USER." user ON schedule.user_id = user.user_id
 			LEFT JOIN ".PARENTS." parents ON schedule.parent_id = parents.p_id
@@ -82,6 +82,20 @@ class schedule_model extends CI_Model {
 		
         $select_result = mysql_query($select_query) or die(mysql_error());
 		while ( $row = mysql_fetch_assoc( $select_result ) ) {
+			// get student name
+			$array_temp = array();
+			$student_name = '';
+			$array_student = $this->student_model->get_by_teacher_parent(array( 'user_id' => $row['user_id'], 'parent_id' => $row['parent_id'] ));
+			foreach ($array_student as $student) {
+				$array_temp[$student['student_name']][] = $student['class_type_name'];
+			}
+			foreach ($array_temp as $key => $class_type) {
+				$string_temp = $key.' ('.implode(', ', $class_type).')';
+				$student_name .= (empty($student_name)) ? $string_temp : ', '.$string_temp;
+			}
+			$row['student_name'] = $student_name;
+			
+			// sync
 			$array[] = $this->sync($row, $param);
 		}
 		

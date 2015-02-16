@@ -1,38 +1,28 @@
-On the administrator dashboard
-- we have a link to generate event,
-where the administrator can say the date and time of the event
-and the timeframe that each teacher is not available and is busy
-and how long the time slot is for each parent.
+is there a way we can do that server side,
+so parents dont have to clear their cache?
+- ok done
 
-On the Parent Dashboard
-- They have a section where they have a list of the teachers of all their children.
-Next to that list is teacher dropdown of the available time slots of each teacher.
-The parent selects the time slots they want and click save.
+Also can you make sure the time format is in 12 hour format,
+it is still in 24 hours
+- ok done
 
-The section on the parent should have the following columns:
-- Teacher Name, Student Name, Subjects, Available Time Slots
+On the left hand bar for the parents,
+it should be Meeting not Metting
+- ok done
 
-The table that you build gets filled up like it does right now
-and the email stuff stays the same
-except if we can add a button to email all teachers and email all parents with the schedule
+On the admin page, the master tab has disappeared,
+if there can only be a limited number,
+we can get rid of the fee tab for now
+- ok done, oh yaa i am create link called "Contact" and it's contain Email and SMS
 
-Notes -
-
-So everything is the same meaning if my child has sister masooma for 2 classes,
-her name is on the list only once and the multiple subjects is
-listed under subjects.
-
-The administrator
-when it generates the event should have a way of picking teachers
-who are not available for the meeting,
-and on the parent dashboard under the available time slots for them,
-it should say No Available Time Slots
-
-The thing is I need this super urgent, by Tuesday at the latest.
-I am willing to pay for the urgency
-so if you can add a milestone that would be great.
-
-Thanks
+Also on the parent's page,
+There is a column for student name and teacher,
+can we also add a column for subject?
 
 
-
+application/helpers/date_helper.php
+application/models/schedule_model.php
+application/models/student_model.php
+application/views/common/meta.php
+application/views/common/panel_left.php
+note.txt

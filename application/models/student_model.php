@@ -394,6 +394,30 @@ class student_model extends CI_Model {
 		return $result;
 	}
 	
+    function get_by_teacher_parent($param = array()) {
+        $array = array();
+		
+		$select_query = "
+			SELECT students.s_name student_name, users.user_display, class_type.name class_type_name
+			FROM students
+			LEFT JOIN teacher_class ON
+				(teacher_class.quran_level_id = students.quran_level_id AND teacher_class.class_level_id = 0)
+				OR (teacher_class.class_level_id = students.class_level_id AND teacher_class.quran_level_id = 0)
+			LEFT JOIN users ON users.user_id = teacher_class.user_id
+			LEFT JOIN class_type ON class_type.id = teacher_class.class_type_id
+			WHERE
+				users.user_id = '".$param['user_id']."'
+				AND students.s_parent_id = '".$param['parent_id']."'
+		";
+		
+        $select_result = mysql_query($select_query) or die(mysql_error());
+		while ( $row = mysql_fetch_assoc( $select_result ) ) {
+			$array[] = $row;
+		}
+		
+        return $array;
+    }
+	
     function delete($param) {
 		$delete_query  = "DELETE FROM ".STUDENT." WHERE s_id = '".$param['s_id']."' LIMIT 1";
 		$delete_result = mysql_query($delete_query) or die(mysql_error());

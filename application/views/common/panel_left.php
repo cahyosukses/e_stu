@@ -23,11 +23,18 @@
 			<li><a href="<?php echo base_url('attendance'); ?>"><span class="icon-check"></span>Attendance</a></li>
 			<li><a href="<?php echo base_url('grade'); ?>"><span class="icon-certificate"></span>Grade</a></li>
 			<li><a href="<?php echo base_url('calendar'); ?>"><span class="icon-calendar"></span>Calendar</a></li>
-			<li><a href="<?php echo base_url('fee'); ?>"><span class="icon-credit-card"></span>Fee</a></li>
-			<li><a href="<?php echo base_url('email'); ?>"><span class="icon-envelope"></span>Email</a></li>
+			<!--   <li><a href="<?php echo base_url('fee'); ?>"><span class="icon-credit-card"></span>Fee</a></li>   -->
+			
+			
 			<li><a href="<?php echo base_url('report_card'); ?>"><span class="icon-envelope"></span>Report Card</a></li>
-			<li><a href="<?php echo base_url('sms'); ?>"><span class="icon-mobile-phone"></span>SMS</a></li>
 			<li><a href="<?php echo base_url('schedule'); ?>"><span class="icon-time"></span>Schedule</a></li>
+			<li class="lp-dropdown">
+				<a href="#" class="lp-dropdown-toggle" id="contact-dropdown"><span class="icon-th-large"></span>Contact</a>
+				<ul class="lp-dropdown-menu" data-dropdown-owner="contact-dropdown">
+					<li><a tabindex="-1" href="<?php echo base_url('email'); ?>"><span class="icon-envelope"></span>Email</a></li>
+					<li><a tabindex="-2" href="<?php echo base_url('sms'); ?>"><span class="icon-mobile-phone"></span>SMS</a></li>
+				</ul>
+			</li>
 			<li class="lp-dropdown">
 				<a href="#" class="lp-dropdown-toggle" id="extras-dropdown"><span class="icon-th-large"></span>Master</a>
 				<ul class="lp-dropdown-menu" data-dropdown-owner="extras-dropdown">
@@ -62,7 +69,7 @@
 			<li><a href="<?php echo base_url('attendance'); ?>"><span class="icon-check"></span>Attendance</a></li>
 			<li><a href="<?php echo base_url('calendar'); ?>"><span class="icon-calendar"></span>Calendar</a></li>
 			<li><a href="<?php echo base_url('email'); ?>"><span class="icon-envelope"></span>Email</a></li>
-			<li><a href="<?php echo base_url('meeting'); ?>"><span class="icon-time"></span>Metting</a></li>
+			<li><a href="<?php echo base_url('meeting'); ?>"><span class="icon-time"></span>Meeting</a></li>
 			<li><a href="<?php echo base_url('teacher'); ?>"><span class="icon-group"></span>Teacher</a></li>
 			<?php } ?>
 			

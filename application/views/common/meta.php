@@ -60,7 +60,7 @@
 	
 	<!-- helper -->
 	<link href="<?php echo base_url('static/css/style.css'); ?>" rel="stylesheet" type="text/css">
-	<script src="<?php echo base_url('static/js/public_function.js'); ?>"></script>
+	<script src="<?php echo base_url('static/js/public_function.js?unix='.time()); ?>"></script>
 	
 	<script type="text/javascript">
 		$(document).ready(function() {
