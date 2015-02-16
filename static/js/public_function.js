@@ -245,6 +245,27 @@ var Func = {
 					data = set_value(data, name, value);
 				} else if (Input.eq(i).hasClass('input-datepicker')) {
 					data = set_value(data, name, Func.swap_date(value));
+				} else if (Input.eq(i).hasClass('timepicker')) {
+					if (value == '') {
+					} else {
+						var array_temp1 = value.split(' ');
+						var array_temp2 = array_temp1[0].split(':');
+						if (array_temp1[1] == 'AM') {
+							var hour = parseInt(array_temp2[0], 10);
+							if (hour == 12) {
+								hour = 0;
+							}
+						} else if (array_temp1[1] == 'PM') {
+							var hour = parseInt(array_temp2[0], 10);
+							if (hour != 12) {
+								hour += 12;
+							}
+						}
+						hour = hour.toString();
+						hour = (hour.length == 1) ? '0' + hour : hour;
+						value = hour + ':' + array_temp2[1] + ':00';
+					}
+					data = set_value(data, name, value);
 				} else {
 					data = set_value(data, name, value);
 				}
@@ -333,6 +354,27 @@ var Func = {
 // combo.category_sub({ category_id: $(this).val(), target: $('#modal-advert-type-sub [name="category_sub_id"]') });
 // combo.category_sub({ category_id: 'x', target: $('#modal-advert-type-sub [name="category_sub_id"]'), value: result.category_sub_id });
 var combo = {
+	schedule: function(p) {
+		p.user_id = (p.user_id == null) ? 0 : p.user_id;
+		
+		var ajax_param = {
+			is_json: 0, url: web.base + 'combo',
+			param: { action: 'schedule', user_id: p.user_id },
+			callback: function(option) {
+				p.target.html(option);
+				
+				// set value
+				if (typeof(p.value) != 'undefined') {
+					p.target.val(p.value);
+				}
+				
+				if (p.callback != null) {
+					p.callback();
+				}
+			}
+		}
+		Func.ajax(ajax_param);
+	},
 	student: function(p) {
 		p.s_parent_id = (p.s_parent_id == null) ? 0 : p.s_parent_id;
 		
@@ -432,7 +474,7 @@ $(document).ready(function() {
 		});
 	}
 	if ($(".datepicker").timepicker != null) {
-		$('.timepicker').timepicker({ minuteStep: 1, template: 'modal', showSeconds: true, showMeridian: false, defaultTime: 'value' });
+		$('.timepicker').timepicker({ minuteStep: 1, template: 'modal', showSeconds: false, showMeridian: true, defaultTime: 'value' });
 	}
 	
 	// tooltips

@@ -62,6 +62,7 @@
 			<li><a href="<?php echo base_url('attendance'); ?>"><span class="icon-check"></span>Attendance</a></li>
 			<li><a href="<?php echo base_url('calendar'); ?>"><span class="icon-calendar"></span>Calendar</a></li>
 			<li><a href="<?php echo base_url('email'); ?>"><span class="icon-envelope"></span>Email</a></li>
+			<li><a href="<?php echo base_url('meeting'); ?>"><span class="icon-time"></span>Metting</a></li>
 			<li><a href="<?php echo base_url('teacher'); ?>"><span class="icon-group"></span>Teacher</a></li>
 			<?php } ?>
 			

@@ -150,6 +150,41 @@ class teacher_class_model extends CI_Model {
 		
         return $result;
     }
+	
+	function get_teacher_by_parent($param = array()) {
+		$result = array();
+		$string_parent = (isset($param['parent_id'])) ? "" : "";
+		
+		$select_query = "
+			SELECT user.user_id, user.user_display,
+				(
+					SELECT GROUP_CONCAT(DISTINCT s_name ORDER BY s_name ASC SEPARATOR ', ')
+					FROM ".STUDENT." student
+					LEFT JOIN teacher_class quran_level ON quran_level.quran_level_id = student.quran_level_id
+					LEFT JOIN teacher_class class_level ON class_level.class_level_id = student.class_level_id
+					WHERE
+						student.s_parent_id = '".$param['parent_id']."'
+						AND (quran_level.user_id = user.user_id OR class_level.user_id = user.user_id)
+				) student_name
+			FROM ".TEACHER_CLASS." teacher_class
+			LEFT JOIN ".USER." user ON user.user_id = teacher_class.user_id
+			WHERE 1
+				AND (
+					teacher_class.quran_level_id IN (SELECT quran_level_id FROM ".STUDENT." WHERE 1 AND s_parent_id = '".$param['parent_id']."')
+					OR teacher_class.class_level_id IN (SELECT class_level_id FROM ".STUDENT." WHERE 1 AND s_parent_id = '".$param['parent_id']."')
+				)
+			GROUP BY user.user_display
+			ORDER BY user.user_display ASC
+			LIMIT 25
+		";
+		
+        $select_result = mysql_query($select_query) or die(mysql_error());
+		while ( $row = mysql_fetch_assoc( $select_result ) ) {
+			$result[] = $this->sync($row, $param);
+		}
+		
+        return $result;
+	}
 
     function get_count($param = array()) {
 		$select_query = "SELECT FOUND_ROWS() total";

@@ -50,169 +50,35 @@ class schedule extends SE_Login_Controller {
 				'user_type_id' => USER_TYPE_TEACHER,
 				'limit' => 50
 			);
-			if (!empty($_POST['user_id'])) {
-				$param_user['user_id'] = $_POST['user_id'];
+			if (isset($_POST['user_id']) && count($_POST['user_id']) > 0) {
+				$param_user['user_id_in'] = implode(',', $_POST['user_id']);
 			}
 			$array_user = $this->user_model->get_array($param_user);
 			
-			// collect teacher class
+			// generate schedule
 			foreach ($array_user as $key => $teacher) {
-				$array_quran_class = $array_level_class = array();
-				$teacher_class = $this->teacher_class_model->get_array(array( 'user_id' => $teacher['user_id'] ));
-				foreach ($teacher_class as $class_info) {
-					if ($class_info['class_type_id'] == CLASS_TYPE_QURAN) {
-						if (!in_array($class_info['quran_level_id'], $array_quran_class)) {
-							$array_quran_class[] = $class_info['quran_level_id'];
-						}
-					} else {
-						if (!in_array($class_info['class_level_id'], $array_level_class)) {
-							$array_level_class[] = $class_info['class_level_id'];
-						}
-					}
-				}
-				
-				$array_user[$key]['array_quran_class'] = $array_quran_class;
-				$array_user[$key]['array_level_class'] = $array_level_class;
-			}
-			
-			// collect parent
-			$max_no_parent = 0;
-			foreach ($array_user as $key => $teacher) {
-				$param_parent = array();
-				if (count($teacher['array_quran_class']) > 0) {
-					$param_parent['quran_level_in'] = implode(',', $teacher['array_quran_class']);
-				}
-				if (count($teacher['array_level_class']) > 0) {
-					$param_parent['class_level_in'] = implode(',', $teacher['array_level_class']);
-				}
-				$array_user[$key]['array_parent'] = $this->parents_model->get_array_child($param_parent);
-				
-				if (count($array_user[$key]['array_parent']) > $max_no_parent) {
-					$max_no_parent = count($array_user[$key]['array_parent']);
-				}
-			}
-			
-			// calculate time
-			$range_time = (ConvertToUnixTime($schedule_end) - ConvertToUnixTime($schedule_start)) / 60;
-			$busy_time = (ConvertToUnixTime($busy_end) - ConvertToUnixTime($busy_start)) / 60;
-			$available_time = $range_time - $busy_time;
-			$required_time = $max_no_parent * $_POST['length_of_time'];
-			if ($required_time > $available_time) {
-				$result['message'] = ($required_time - $available_time).' more minutes required for '.$max_no_parent.' parents';
-				echo json_encode($result);
-				exit;
-			}
-			
-			// generate each parent
-			foreach ($array_user as $key => $teacher) {
-				$array_schedule_pending = array();
 				$time_generate_start = $schedule_start;
-				foreach ($teacher['array_parent'] as $parent) {
-					// validate
-					$time_generate_end = add_date($time_generate_start, $_POST['length_of_time'].' minutes', array( 'date_format' => 'Y-m-d H:i:s' ));
+				$time_generate_end = add_date($time_generate_start, $_POST['length_of_time'].' minutes', array( 'date_format' => 'Y-m-d H:i:s' ));
+				while (ConvertToUnixTime($time_generate_end) <= ConvertToUnixTime($schedule_end)) {
+					// skip at busy time
 					if (	!empty($_POST['busy_time_start'])
 							&& ConvertToUnixTime($time_generate_end) > ConvertToUnixTime($busy_start)
-							&& ConvertToUnixTime($time_generate_end) < ConvertToUnixTime($busy_end)
+							&& ConvertToUnixTime($time_generate_end) <= ConvertToUnixTime($busy_end)
 						) {
-						$time_generate_start = $busy_end;
-						$time_generate_end = add_date($time_generate_start, $_POST['length_of_time'].' minutes', array( 'date_format' => 'Y-m-d H:i:s' ));
-					}
-					
-					#region pending flow
-					foreach ($array_schedule_pending as $key => $pending) {
-						if ($pending['is_done']) {
-							continue;
-						}
 						
-						$pending_check = array(
-							'parent_id' => $pending['parent_id'],
-							'time_frame' => $time_generate_start
-						);
-						$pending_check = $this->schedule_model->get_array($pending_check);
-						if (count($pending_check) == 0) {
-							$param_insert = array(
-								'user_id' => $teacher['user_id'],
-								'parent_id' => $pending['parent_id'],
-								'time_frame' => $time_generate_start
-							);
-							$result = $this->schedule_model->update($param_insert);
-							$array_schedule_pending[$key]['is_done'] = true;
-							
-							// update next schedule time
-							$time_generate_start = $time_generate_end;
-							$time_generate_end = add_date($time_generate_start, $_POST['length_of_time'].' minutes', array( 'date_format' => 'Y-m-d H:i:s' ));
-							if (	!empty($_POST['busy_time_start'])
-									&& ConvertToUnixTime($time_generate_end) > ConvertToUnixTime($busy_start)
-									&& ConvertToUnixTime($time_generate_end) < ConvertToUnixTime($busy_end)
-								) {
-								$time_generate_start = $busy_end;
-								$time_generate_end = add_date($time_generate_start, $_POST['length_of_time'].' minutes', array( 'date_format' => 'Y-m-d H:i:s' ));
-							}
-						}
 					}
-					#endregion pending flow
-					
-					#region normal flow
-					// make sure parent do not have schedule at this time
-					$param_check = array(
-						'parent_id' => $parent['parent_id'],
-						'time_frame' => $time_generate_start
-					);
-					$array_check = $this->schedule_model->get_array($param_check);
-					
-					// insert or pending
-					if (count($array_check) == 0) {
+					// insert
+					else {
 						$param_insert = array(
 							'user_id' => $teacher['user_id'],
-							'parent_id' => $parent['parent_id'],
 							'time_frame' => $time_generate_start
 						);
 						$result = $this->schedule_model->update($param_insert);
-						
-						// update next schedule time
-						$time_generate_start = $time_generate_end;
-					} else {
-						$array_schedule_pending[] = array( 'parent_id' => $parent['parent_id'], 'is_done' => false );
-					}
-					#endregion normal flow
-				}
-				
-				// last parent with pending status
-				foreach ($array_schedule_pending as $key => $pending) {
-					if ($pending['is_done']) {
-						continue;
 					}
 					
-					for ($i = 0; $i <= 10; $i++) {
-						$pending_check = array(
-							'parent_id' => $pending['parent_id'],
-							'time_frame' => $time_generate_start
-						);
-						$pending_check = $this->schedule_model->get_array($pending_check);
-						
-						// insert or get next schedule
-						if (count($pending_check) == 0) {
-							$param_insert = array(
-								'user_id' => $teacher['user_id'],
-								'parent_id' => $pending['parent_id'],
-								'time_frame' => $time_generate_start
-							);
-							$result = $this->schedule_model->update($param_insert);
-							$array_schedule_pending[$key]['is_done'] = true;
-							break;
-						} else {
-							// update next schedule time
-							$time_generate_start = $time_generate_end;
-							$time_generate_end = add_date($time_generate_start, $_POST['length_of_time'].' minutes', array( 'date_format' => 'Y-m-d H:i:s' ));
-							if (	!empty($_POST['busy_time_start'])
-									&& ConvertToUnixTime($time_generate_end) > ConvertToUnixTime($busy_start)
-									&& ConvertToUnixTime($time_generate_end) < ConvertToUnixTime($busy_end)
-								) {
-								$time_generate_start = $busy_end;
-								$time_generate_end = add_date($time_generate_start, $_POST['length_of_time'].' minutes', array( 'date_format' => 'Y-m-d H:i:s' ));
-							}
-						}
-					}
+					// update next schedule time
+					$time_generate_start = $time_generate_end;
+					$time_generate_end = add_date($time_generate_start, $_POST['length_of_time'].' minutes', array( 'date_format' => 'Y-m-d H:i:s' ));
 				}
 			}
 		}

@@ -98,6 +98,18 @@
 			<div class="box-grid">
 				<div class="box">
 					<h4 class="center-title">Schedule List</h4>
+					
+					<div style="padding: 0 0 15px 0;">
+						<button class="btn box-schedule-generate" style="margin: 0px 5px 0px 0px;">Generate</button>
+						<div class="btn-group">
+							<button data-toggle="dropdown" class="btn btn-notofication dropdown-toggle" style="margin: 0px;">Send Mail <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a class="cursor btn-mail-parent">Parent</a></li>
+								<li><a class="cursor btn-mail-teacher">Teacher</a></li>
+							</ul>
+						</div>
+					</div>
+					
 					<table class="table table-striped" id="schedule-grid">
 						<thead>
 							<tr>
@@ -131,17 +143,20 @@
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label" style="padding-top: 9px;">Time From</label>
+							<label class="control-label">Select a Teacher</label>
+							<div class="controls">
+								<select name="user_id" class="span8" multiple size="10">
+									<?php echo ShowOption(array( 'Array' => $array_teacher, 'ArrayID' => 'user_id', 'ArrayTitle' => 'user_display', 'WithEmptySelect' => 0 )); ?>
+								</select>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" style="padding-top: 9px;">Time From - To</label>
 							<div class="controls">
 								<div class="input-append bootstrap-timepicker" style="padding-top: 6px;">
 									<input name="available_time_start" class="timepicker input-small" type="text" />
 									<span class="add-on"><i class="icon-time"></i></span>
 								</div>
-							</div>
-						</div>
-						<div class="control-group">
-							<label class="control-label" style="padding-top: 9px;">Time To</label>
-							<div class="controls">
 								<div class="input-append bootstrap-timepicker" style="padding-top: 6px;">
 									<input name="available_time_to" class="timepicker input-small" type="text" />
 									<span class="add-on"><i class="icon-time"></i></span>
@@ -149,25 +164,12 @@
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label">Select a Teacher</label>
-							<div class="controls">
-								<select name="user_id" class="span8">
-									<?php echo ShowOption(array( 'Array' => $array_teacher, 'ArrayID' => 'user_id', 'ArrayTitle' => 'user_display', 'OptAll' => true )); ?>
-								</select>
-							</div>
-						</div>
-						<div class="control-group">
-							<label class="control-label" style="padding-top: 9px;">Busy Time From</label>
+							<label class="control-label" style="padding-top: 9px;">Busy Time From - To</label>
 							<div class="controls">
 								<div class="input-append bootstrap-timepicker" style="padding-top: 6px;">
 									<input name="busy_time_start" class="timepicker input-small" type="text" />
 									<span class="add-on"><i class="icon-time"></i></span>
 								</div>
-							</div>
-						</div>
-						<div class="control-group">
-							<label class="control-label" style="padding-top: 9px;">Busy Time To</label>
-							<div class="controls">
 								<div class="input-append bootstrap-timepicker" style="padding-top: 6px;">
 									<input name="busy_time_to" class="timepicker input-small" type="text" />
 									<span class="add-on"><i class="icon-time"></i></span>
@@ -210,21 +212,8 @@ $(document).ready(function() {
 	var param = {
 		id: 'schedule-grid',
 		source: web.base + 'schedule/grid', aaSorting: [[ 0, "ASC" ]],
-		column: [ { }, { }, { }, { }, { bSortable: false }, { bSortable: false, sClass: 'center' } ],
+		column: [ { }, { }, { sClass: 'column-small' }, { sClass: 'column-small' }, { bSortable: false, sClass: 'column-small' }, { bSortable: false, sClass: 'center' } ],
 		init: function() {
-			$('#schedule-grid_length').prepend(
-				'<div style="float: left; padding: 0 5px 0 0;">' +
-					'<button class="btn box-schedule-generate" style="margin: 0px 5px 0px 0px;">Generate</button>' +
-					'<div class="btn-group">' +
-						'<button data-toggle="dropdown" class="btn btn-notofication dropdown-toggle" style="margin: 0px;">Send Mail <span class="caret"></span></button>' +
-						'<ul class="dropdown-menu">' +
-							'<li><a class="cursor btn-mail-parent">Parent</a></li>' +
-							'<li><a class="cursor btn-mail-teacher">Teacher</a></li>' +
-						'</ul>' +
-					'</div>' +
-				'</div>'
-			);
-			
 			//  init button
 			$('.btn-mail-parent').click(function() {
 				$('#modal-parent').modal();
@@ -300,11 +289,14 @@ $(document).ready(function() {
 				page.show_grid();
 				$('#form-schedule')[0].reset();
 				$('#form-schedule [type="submit"]').attr('disabled', false);
+			},
+			callback_error: function() {
+				$('#form-schedule [type="submit"]').attr('disabled', false);
 			}
 		});
 	});
 	
-	// modal parent
+	// modal mail parent
 	$('#modal-parent form').validate({
 		rules: {
 			p_id: { required: true }
@@ -330,7 +322,7 @@ $(document).ready(function() {
 		});
 	});
 	
-	// modal parent
+	// modal mail teacher
 	$('#modal-teacher form').validate({
 		rules: {
 			user_id: { required: true }

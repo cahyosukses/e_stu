@@ -53,7 +53,7 @@ class schedule_model extends CI_Model {
 		$param['field_replace']['time_frame_title'] = 'schedule.time_frame';
 		
 		$string_user = (!empty($param['user_id'])) ? "AND schedule.user_id = '".$param['user_id']."'" : '';
-		$string_parent = (!empty($param['parent_id'])) ? "AND schedule.parent_id = '".$param['parent_id']."'" : '';
+		$string_parent = (isset($param['parent_id'])) ? "AND schedule.parent_id = '".$param['parent_id']."'" : '';
 		$string_time_frame = (isset($param['time_frame'])) ? "AND schedule.time_frame = '".$param['time_frame']."'" : '';
 		$string_time_frame_min = (isset($param['time_frame_min'])) ? "AND schedule.time_frame >= '".$param['time_frame_min']."'" : '';
 		$string_filter = GetStringFilter($param, @$param['column']);
@@ -87,8 +87,56 @@ class schedule_model extends CI_Model {
         return $array;
     }
 
+	function get_teacher_without_schedule($param = array()) {
+		$param['result_type'] = (isset($param['result_type'])) ? $param['result_type'] : '';
+		
+		$array_teacher = $this->teacher_class_model->get_teacher_by_parent(array( 'parent_id' => $param['parent_id'] ));
+		$array_teacher_schedule = $this->schedule_model->get_array(array( 'parent_id' => $param['parent_id'] ));
+		
+		
+		// remove teacher with schedule
+		$result = array();
+		foreach ($array_teacher as $teacher) {
+			$schedule_exist = false;
+			$count_schedule_left = $this->schedule_model->get_count(array( 'query_type' => 'schedule_left', 'user_id' => $teacher['user_id'] ));
+			foreach ($array_teacher_schedule as $schedule) {
+				if ($schedule['user_id'] == $teacher['user_id']) {
+					$schedule_exist = true;
+					break;
+				}
+			}
+			
+			// mark unavilable when teacher do not have schedule left
+			if ($count_schedule_left == 0) {
+				$teacher['user_display'] .= ' - No Available Time Slots';
+			}
+			
+			if (!$schedule_exist) {
+				$result[] = $teacher;
+			}
+		}
+		
+		// datatable
+		if ($param['result_type'] == 'datatable') {
+			$result_temp = $result;
+			$result = array();
+			foreach ($result_temp as $row) {
+				$result[] = $this->sync($row, $param);
+			}
+		}
+		
+		return $result;
+	}
+	
     function get_count($param = array()) {
-		$select_query = "SELECT FOUND_ROWS() total";
+		$param['query_type'] = (isset($param['query_type'])) ? $param['query_type'] : '';
+		
+		if ($param['query_type'] == 'schedule_left') {
+			$select_query = "SELECT COUNT(*) total FROM ".SCHEDULE." WHERE user_id = '".$param['user_id']."' AND parent_id = '0'";
+		} else {
+			$select_query = "SELECT FOUND_ROWS() total";
+		}
+		
 		$select_result = mysql_query($select_query) or die(mysql_error());
 		$row = mysql_fetch_assoc($select_result);
 		$total = $row['total'];

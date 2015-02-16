@@ -1,60 +1,38 @@
-Also - We are having a parent teacher conference next week
-and I was wondering if we can make a scheduling system.
-For example, it will be a page (does not have to be on the dashboard)
-that will have some criteria like :
+On the administrator dashboard
+- we have a link to generate event,
+where the administrator can say the date and time of the event
+and the timeframe that each teacher is not available and is busy
+and how long the time slot is for each parent.
 
-Timeframe of the Event:
-Time a Teacher is busy:
-Length of time of a parent with each student:
+On the Parent Dashboard
+- They have a section where they have a list of the teachers of all their children.
+Next to that list is teacher dropdown of the available time slots of each teacher.
+The parent selects the time slots they want and click save.
 
-and with that we can generate a schedule where every parent can talk to the teacher of their students.
-The goal is to make it so the parents dont have to stay for a long time
-and can talk to all the teachers at once
-and be done rather than having a meeting in the morning
-and then the next meeting be in the afternoon
+The section on the parent should have the following columns:
+- Teacher Name, Student Name, Subjects, Available Time Slots
 
-For Example:
+The table that you build gets filled up like it does right now
+and the email stuff stays the same
+except if we can add a button to email all teachers and email all parents with the schedule
 
-Timeframe of the Event: 10:30 AM - 3PM
-Time a Teacher is busy: Taha Dharsi 11:30 - 3:00
-Length of time of a parent with each student: 10 minutes
+Notes -
 
-With that we will schedule time for the parents
-where each parent will meet with the teacher of their students for 10 minutes each.
+So everything is the same meaning if my child has sister masooma for 2 classes,
+her name is on the list only once and the multiple subjects is
+listed under subjects.
 
-The interface would look like this
+The administrator
+when it generates the event should have a way of picking teachers
+who are not available for the meeting,
+and on the parent dashboard under the available time slots for them,
+it should say No Available Time Slots
 
-The columns would be Time Frame, Father Name, Mother Name, Teacher
+The thing is I need this super urgent, by Tuesday at the latest.
+I am willing to pay for the urgency
+so if you can add a milestone that would be great.
 
-There will be a button
-where we could email each parent and let them know of their schedule
-and also email each teacher and let them know of their schedule as well
-
----------------------------------------------------------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS `schedule` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `parent_id` int(11) NOT NULL,
-  `time_frame` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
-
-application/config/autoload.php
-application/config/constants.php
-
-application/controllers/schedule.php
-application/helpers/common_helper.php
-application/helpers/date_helper.php
-application/models/parents_model.php
-application/models/schedule_model.php
-application/models/user_model.php
-application/views/common/panel_left.php
-application/views/schedule.php
-
-note.txt
-static/css/style.css
+Thanks
 
 
 
