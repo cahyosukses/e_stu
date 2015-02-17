@@ -25,34 +25,38 @@ table { font-family: sans-serif; border: 1px solid #000000; border-collapse: col
 th, td { border: 1px solid #000000; vertical-align: middle; }
 </style>
 
-<?php $counter = 0; ?>
-<?php foreach ($array_teacher as $teacher_name => $array) { ?>
-	<?php if ($counter > 0) { ?>
-	<pagebreak />
-	<?php } ?>
-	
-	<h3 style="text-align: center;">Schedule - <?php echo $teacher_name; ?></h3>
-	
-	<table class="table" style="width: 100%; font-size: 12px;">
-		<thead>
-			<tr>
-				<th style="width: 20%;" class="center">Time Frame</th>
-				<th style="width: 20%;" class="center">Father Name</th>
-				<th style="width: 20%;" class="center">Mother Name</th>
-				<th style="width: 40%;">Student</th>
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach ($array as $row) { ?>
+<?php if (count($array_teacher) > 0) { ?>
+	<?php $counter = 0; ?>
+	<?php foreach ($array_teacher as $teacher_name => $array) { ?>
+		<?php if ($counter > 0) { ?>
+		<pagebreak />
+		<?php } ?>
+		
+		<h3 style="text-align: center;">Schedule - <?php echo $teacher_name; ?></h3>
+		
+		<table class="table" style="width: 100%; font-size: 12px;">
+			<thead>
 				<tr>
-					<td class="center"><?php echo $row['time_frame_title']; ?></td>
-					<td class="center"><?php echo $row['father_name']; ?></td>
-					<td class="center"><?php echo $row['mother_name']; ?></td>
-					<td><?php echo $row['student_name']; ?></td>
+					<th style="width: 20%;" class="center">Time Frame</th>
+					<th style="width: 20%;" class="center">Father Name</th>
+					<th style="width: 20%;" class="center">Mother Name</th>
+					<th style="width: 40%;">Student</th>
 				</tr>
-			<?php } ?>
-		</tbody>
-	</table>
-	
-	<?php $counter++; ?>
+			</thead>
+			<tbody>
+				<?php foreach ($array as $row) { ?>
+					<tr>
+						<td class="center"><?php echo $row['time_frame_title']; ?></td>
+						<td class="center"><?php echo $row['father_name']; ?></td>
+						<td class="center"><?php echo $row['mother_name']; ?></td>
+						<td><?php echo $row['student_name']; ?></td>
+					</tr>
+				<?php } ?>
+			</tbody>
+		</table>
+		
+		<?php $counter++; ?>
+	<?php } ?>
+<?php } else { ?>
+	<h3 style="text-align: center;">Sorry, there is no schedule available</h3>
 <?php } ?>
