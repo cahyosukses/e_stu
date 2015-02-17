@@ -14,7 +14,7 @@ class schedule extends SE_Login_Controller {
 		$_POST['column'] = array( 'time_frame_title', 'father_name', 'mother_name', 'user_display', 'student_name' );
 		
 		$array = $this->schedule_model->get_array($_POST);
-		$count = $this->schedule_model->get_count();
+		$count = $this->schedule_model->get_count($_POST);
 		$grid = array( 'sEcho' => $_POST['sEcho'], 'aaData' => $array, 'iTotalRecords' => $count, 'iTotalDisplayRecords' => $count );
 		
 		echo json_encode($grid);
@@ -218,5 +218,15 @@ class schedule extends SE_Login_Controller {
 		}
 		
 		echo json_encode($result);
+	}
+	
+	function generate() {
+		ini_set("memory_limit", "256M");
+		$this->load->library('mpdf');
+		
+		// generate report card
+		$template = $this->load->view( 'schedule_pdf', $param, true );
+		$this->mpdf->WriteHTML($template);
+		$this->mpdf->Output();
 	}
 }

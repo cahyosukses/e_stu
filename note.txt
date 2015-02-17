@@ -1,30 +1,8 @@
-is there a way we can do that server side,
-so parents dont have to clear their cache?
+I think the pagination on the schedule list for administrator is broken,
+I cant click on next page
+- ok sorry, i am update about subject student and it's dont support with current paging
+btw it's already fix now
+
+Can you add a print button that basically generates a PDF of all the timeslots per teacher,
+so for example one page is for a specific teacher
 - ok done
-
-Also can you make sure the time format is in 12 hour format,
-it is still in 24 hours
-- ok done
-
-On the left hand bar for the parents,
-it should be Meeting not Metting
-- ok done
-
-On the admin page, the master tab has disappeared,
-if there can only be a limited number,
-we can get rid of the fee tab for now
-- ok done, oh yaa i am create link called "Contact" and it's contain Email and SMS
-
-Also on the parent's page,
-There is a column for student name and teacher,
-can we also add a column for subject?
-- sorry, i cannot add colomn there
-because if we add column can be more than one student there
-so i make it at student column, please review
-
-application/helpers/date_helper.php
-application/models/schedule_model.php
-application/models/student_model.php
-application/views/common/meta.php
-application/views/common/panel_left.php
-note.txt

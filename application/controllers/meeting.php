@@ -18,7 +18,7 @@ class meeting extends SE_Login_Controller {
 			$_POST['column'] = array( 'time_frame_title', 'user_display', 'student_name' );
 			
 			$array = $this->schedule_model->get_array($_POST);
-			$count = $this->schedule_model->get_count();
+			$count = $this->schedule_model->get_count($_POST);
 		} else if ($grid_type == 'meeting_required') {
 			$param = array(
 				'is_edit_only' => 1,
@@ -27,7 +27,7 @@ class meeting extends SE_Login_Controller {
 				'column' => array( 'user_display', 'student_name' )
 			);
 			$array = $this->schedule_model->get_teacher_without_schedule($param);
-			$count = $this->schedule_model->get_count();
+			$count = count($array);
 		}
 		
 		$grid = array( 'sEcho' => $_POST['sEcho'], 'aaData' => $array, 'iTotalRecords' => $count, 'iTotalDisplayRecords' => $count );

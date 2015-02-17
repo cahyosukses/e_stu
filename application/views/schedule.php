@@ -66,6 +66,29 @@
 		</form>
 	</div>
 	
+	<div id="modal-pdf" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modal-pdfLabel" aria-hidden="true">
+		<form class="form-horizontal" style="margin: 0px;">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 id="modal-pdfLabel">Generate PDF</h3>
+			</div>
+			<div class="modal-body">
+				<div class="control-group">
+					<label class="control-label">Teacher</label>
+					<div class="controls">
+						<select name="user_id" class="span3">
+							<?php echo ShowOption(array( 'Array' => $array_teacher, 'ArrayID' => 'user_id', 'ArrayTitle' => 'user_display', 'OptAll' => true )); ?>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="submit" class="btn btn-primary" value="Generate PDF" />
+				<input type="button" class="btn" data-dismiss="modal" value="Close" />
+			</div>
+		</form>
+	</div>
+	
 	<div id="modal-parent" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modal-parenteLabel" aria-hidden="true">
 		<form class="form-horizontal" style="margin: 0px;">
 			<input type="hidden" name="action" value="mail_parent" />
@@ -100,7 +123,10 @@
 					<h4 class="center-title">Schedule List</h4>
 					
 					<div style="padding: 0 0 15px 0;">
-						<button class="btn box-schedule-generate" style="margin: 0px 5px 0px 0px;">Generate</button>
+						<div class="btn-group">
+							<button class="btn btn-schedule-generate">Generate</button>
+							<button class="btn btn-pdf-generate">PDF</button>
+						</div>
 						<div class="btn-group">
 							<button data-toggle="dropdown" class="btn btn-notofication dropdown-toggle" style="margin: 0px;">Send Mail <span class="caret"></span></button>
 							<ul class="dropdown-menu">
@@ -221,6 +247,9 @@ $(document).ready(function() {
 			$('.btn-mail-teacher').click(function() {
 				$('#modal-teacher').modal();
 			});
+			$('.btn-pdf-generate').click(function() {
+				$('#modal-pdf').modal();
+			});
 		},
 		callback: function() {
 			$('#schedule-grid .btn-edit').click(function() {
@@ -254,7 +283,7 @@ $(document).ready(function() {
 	var dt = Func.datatable(param);
 	
 	// form student
-	$('.box-schedule-generate').click(function() {
+	$('.btn-schedule-generate').click(function() {
 		// reset form
 		$('#form-schedule')[0].reset();
 		
@@ -346,6 +375,23 @@ $(document).ready(function() {
 				$('#modal-teacher').modal('hide');
 			}
 		});
+	});
+	
+	// modal generate pdf
+	$('#modal-pdf form').validate({
+		rules: {
+			user_id: { required: true }
+		}
+	});
+	$('#modal-pdf form').submit(function(e) {
+		e.preventDefault();
+		if (! $('#modal-pdf form').valid()) {
+			return false;
+		}
+		
+		var param = Func.form.get_value('modal-pdf form');
+		var link_pdf = web.base + 'schedule/generate/' + param.user_id;
+		window.open(link_pdf);
 	});
 });
 </script>
