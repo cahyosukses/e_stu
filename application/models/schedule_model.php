@@ -94,14 +94,12 @@ class schedule_model extends CI_Model {
     }
 
 	function get_teacher_without_schedule($param = array()) {
-		$param['result_type'] = (isset($param['result_type'])) ? $param['result_type'] : '';
-		
+		$result = array( 'array_teacher' => array(), 'datatable' => array() );
 		$array_teacher = $this->teacher_class_model->get_teacher_by_parent(array( 'parent_id' => $param['parent_id'] ));
 		$array_teacher_schedule = $this->schedule_model->get_array(array( 'parent_id' => $param['parent_id'] ));
 		
-		
 		// remove teacher with schedule
-		$result = array();
+		$array_teacher_id = array();
 		foreach ($array_teacher as $teacher) {
 			if (empty($teacher['user_display'])) {
 				continue;
@@ -122,16 +120,24 @@ class schedule_model extends CI_Model {
 			}
 			
 			if (!$schedule_exist) {
-				$result[] = $teacher;
+				$array_teacher_id[] = $teacher['user_id'];
+				$result['array_teacher'][$teacher['user_id']] = $teacher;
 			}
 		}
 		
-		// datatable
-		if ($param['result_type'] == 'datatable') {
-			$result_temp = $result;
-			$result = array();
-			foreach ($result_temp as $row) {
-				$result[] = $this->sync($row, $param);
+		// get result
+		$param_result = $param;
+		$param_result['user_id_in'] = implode(',', $array_teacher_id);
+		$result['datatable'] = $this->user_model->get_array($param_result);
+		
+		// override datatable
+		foreach ($result['datatable'] as $key => $row) {
+			preg_match('/\"user_id\":\"(\d+)\"/i', $row[count($row) - 1], $match);
+			$user_id = (isset($match[1])) ? $match[1] : 0;
+			
+			if (isset($result['array_teacher'][$user_id]) && count($result['array_teacher'][$user_id]) > 0) {
+				$result['datatable'][$key][0] = $result['array_teacher'][$user_id]['user_display'];
+				$result['datatable'][$key][1] = $result['array_teacher'][$user_id]['student_name'];
 			}
 		}
 		

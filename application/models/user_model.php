@@ -80,6 +80,7 @@ class user_model extends CI_Model {
 		$array = array();
 		$param['with_subject'] = (isset($param['with_subject'])) ? $param['with_subject'] : 0;
 		
+		$param['field_replace']['student_name'] = '';
 		$param['field_replace']['user_type_title'] = 'user_type.title';
 		
 		$string_namelike = (!empty($param['namelike'])) ? "AND user.email LIKE '%".$param['namelike']."%'" : '';

@@ -52,9 +52,10 @@
 					<table class="table table-striped" id="meeting-list-grid">
 						<thead>
 							<tr>
-								<th style="width: 30%;">Time Frame</th>
-								<th style="width: 30%;">Teacher</th>
+								<th style="width: 20%;">Time Frame</th>
+								<th style="width: 20%;">Teacher</th>
 								<th style="width: 40%;">Student</th>
+								<th style="width: 20%;">Control</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -93,9 +94,18 @@ $(document).ready(function() {
 	var param_meeting_list = {
 		id: 'meeting-list-grid',
 		source: web.base + 'meeting/grid', aaSorting: [[ 0, "ASC" ]],
-		column: [ { sClass: 'center' }, { }, { bSortable: false } ],
+		column: [ { sClass: 'center' }, { }, { bSortable: false }, { bSortable: false, sClass: 'center' } ],
 		fnServerParams: function(aoData) {
 			aoData.push( { name: 'grid_type', value: 'meeting_list' } );
+		},
+		callback: function() {
+			$('#meeting-list-grid .btn-edit').click(function() {
+				var raw_record = $(this).siblings('.hide').text();
+				eval('var record = ' + raw_record);
+				
+				combo.schedule({ user_id: record.user_id, target: $('#modal-schedule [name="id"]') });
+				$('#modal-schedule').modal();
+			});
 		}
 	}
 	var dt_meeting_list = Func.datatable(param_meeting_list);
@@ -123,6 +133,9 @@ $(document).ready(function() {
 				dt_meeting_required.reload();
 				$('#modal-schedule').modal('hide');
 				$('#modal-schedule form')[0].reset();
+				$('#modal-schedule [type="submit"]').attr('disabled', false);
+			},
+			callback_error: function(result) {
 				$('#modal-schedule [type="submit"]').attr('disabled', false);
 			}
 		});
