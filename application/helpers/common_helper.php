@@ -1050,10 +1050,8 @@ if (! function_exists('get_score_grade')) {
 		} else if ($value >= 80) {
 			$result = 'B';
 		} else if ($value >= 70) {
-			$result = 'C';
-		} else if ($value >= 60) {
 			$result = 'S';
-		} else {
+		}  else {
 			$result = 'N';
 		}
 		

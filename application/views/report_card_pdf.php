@@ -191,7 +191,7 @@ a {
 		<thead>
 			<tr>
 				<th>GOOD</th>
-				<th>BAD</th>
+				<th>NEEDS IMPROVEMENT</th>
 			</tr>
 		</thead>
 		<tbody>

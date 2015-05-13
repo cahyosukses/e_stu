@@ -133,7 +133,7 @@ class class_level_model extends CI_Model {
 				SELECT '1' class_type_id, 'Quran' class_type_name, quran_level.id quran_level_id, '0' class_level_id, quran_level.name class_level_name, quran_level.no_order no_order, class_note.finalize_date,
 					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 1 AND teacher_class.quran_level_id = quran_level.id ) teacher_name
 				FROM quran_level
-				LEFT JOIN class_note ON class_note.quran_level_id = quran_level.id AND class_note.quran_level_id = 1
+				LEFT JOIN class_note ON class_note.quran_level_id = quran_level.id AND class_note.class_type_id = 1
 				UNION
 				SELECT '2' class_type_id, 'Fiqh' class_type_name, '0' quran_level_id, class_level.id class_level_id, class_level.name class_level_name, class_level.no_order no_order, class_note.finalize_date,
 					( SELECT GROUP_CONCAT(user_display SEPARATOR ', ') FROM teacher_class LEFT JOIN users ON users.user_id = teacher_class.user_id WHERE teacher_class.class_type_id = 2 AND teacher_class.class_level_id = class_level.id ) teacher_name

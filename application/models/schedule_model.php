@@ -126,9 +126,11 @@ class schedule_model extends CI_Model {
 		}
 		
 		// get result
-		$param_result = $param;
-		$param_result['user_id_in'] = implode(',', $array_teacher_id);
-		$result['datatable'] = $this->user_model->get_array($param_result);
+		if (count($array_teacher_id) > 0) {
+			$param_result = $param;
+			$param_result['user_id_in'] = implode(',', $array_teacher_id);
+			$result['datatable'] = $this->user_model->get_array($param_result);
+		}
 		
 		// override datatable
 		foreach ($result['datatable'] as $key => $row) {

@@ -106,6 +106,19 @@ $(document).ready(function() {
 				combo.schedule({ user_id: record.user_id, target: $('#modal-schedule [name="id"]') });
 				$('#modal-schedule').modal();
 			});
+			
+			$('#meeting-list-grid .btn-delete').click(function() {
+				var raw_record = $(this).siblings('.hide').text();
+				eval('var record = ' + raw_record);
+				
+				Func.form.confirm_delete({
+					data: { action: 'delete_parent', id: record.id },
+					url: web.base + 'meeting/action', callback: function() {
+						dt_meeting_list.reload();
+						dt_meeting_required.reload();
+					}
+				});
+			});
 		}
 	}
 	var dt_meeting_list = Func.datatable(param_meeting_list);

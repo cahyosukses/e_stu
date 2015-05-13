@@ -269,6 +269,16 @@ $(document).ready(function() {
 				$('#modal-schedule').modal();
 			});
 			
+			$('#schedule-grid .btn-delete-parent').click(function() {
+				var raw_record = $(this).siblings('.hide').text();
+				eval('var record = ' + raw_record);
+				
+				Func.form.confirm_delete({
+					data: { action: 'delete_parent', id: record.id },
+					url: web.base + 'schedule/action', callback: function() { dt.reload(); }
+				});
+			});
+			
 			$('#schedule-grid .btn-delete').click(function() {
 				var raw_record = $(this).siblings('.hide').text();
 				eval('var record = ' + raw_record);

@@ -70,7 +70,7 @@ class task extends SE_Login_Controller {
 			$result = $this->task_model->update($_POST);
 			
 			// add student
-			if ($is_insert && $is_send_mail) {
+			if ($is_insert) {
 				$param_student = array();
 				if (!empty($_POST['quran_level_id'])) {
 					$param_student['quran_level_id'] = $_POST['quran_level_id'];

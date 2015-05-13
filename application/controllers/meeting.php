@@ -14,7 +14,7 @@ class meeting extends SE_Login_Controller {
 		$grid_type = (isset($_POST['grid_type'])) ? $_POST['grid_type'] : 'meeting_list';
 		
 		if ($grid_type == 'meeting_list') {
-			$_POST['is_edit_only'] = 1;
+			$_POST['is_edit'] = 1;
 			$_POST['parent_id'] = $user['p_id'];
 			$_POST['column'] = array( 'time_frame_title', 'user_display', 'student_name' );
 			
@@ -71,6 +71,14 @@ class meeting extends SE_Login_Controller {
 			
 			// update selected schedule
 			$result = $this->schedule_model->update(array( 'id' => $_POST['id'], 'parent_id' => $user['p_id'] ));
+		}
+		else if ($action == 'delete_parent') {
+			$param['id'] = $_POST['id'];
+			$param['parent_id'] = 0;
+			$result = $this->schedule_model->update($param);
+			
+			$result['status'] = '1';
+			$result['message'] = 'Data successfully removed.';
 		}
 		
 		echo json_encode($result);

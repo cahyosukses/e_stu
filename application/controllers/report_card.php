@@ -184,7 +184,7 @@ class report_card extends SE_Login_Controller {
 			'user_display' => $user['user_display'],
 			'array_to' => $array_to,
 			'array_sub' => $array_sub,
-			'subject' => 'Report Card',
+			'subject' => 'Report Card - Jafaria Education Center',
 			'content' => $content['config_value'],
 			'title' => $user_type['title']
 		);

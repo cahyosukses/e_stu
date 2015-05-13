@@ -10,7 +10,9 @@ class schedule extends SE_Login_Controller {
     }
 	
 	function grid() {
-		$_POST['is_edit'] = 1;
+		$_POST['is_custom']  = '<span class="cursor-font-awesome icon-pencil btn-edit" title="Edit"></span>';
+		$_POST['is_custom'] .= '<span class="cursor-font-awesome icon-trash btn-delete-parent" title="Delete Parent Only"></span>';
+		$_POST['is_custom'] .= '<span class="cursor-font-awesome icon-trash btn-delete" title="Delete"></span>';
 		$_POST['column'] = array( 'time_frame_title', 'father_name', 'mother_name', 'user_display', 'student_name' );
 		
 		$array = $this->schedule_model->get_array($_POST);
@@ -140,7 +142,7 @@ class schedule extends SE_Login_Controller {
 					'user_display' => $user['user_display'],
 					'array_to' => $array_to,
 					'array_sub' => $array_sub,
-					'subject' => 'Schedule',
+					'subject' => 'Parent/Teacher Meeting Schedule',
 					'content' => $content['config_value'],
 					'title' => $user_type['title']
 				);
@@ -202,7 +204,7 @@ class schedule extends SE_Login_Controller {
 					'user_display' => $user['user_display'],
 					'array_to' => $array_to,
 					'array_sub' => $array_sub,
-					'subject' => 'Schedule',
+					'subject' => 'Parent/Teacher Meeting Schedule',
 					'content' => $content['config_value'],
 					'title' => $user_type['title']
 				);
@@ -212,6 +214,14 @@ class schedule extends SE_Login_Controller {
 			
             $result['status'] = '1';
             $result['message'] = count($array_to).' email sent.';
+		}
+		else if ($action == 'delete_parent') {
+			$param['id'] = $_POST['id'];
+			$param['parent_id'] = 0;
+			$result = $this->schedule_model->update($param);
+			
+			$result['status'] = '1';
+			$result['message'] = 'Data successfully removed.';
 		}
 		else if ($action == 'delete') {
 			$result = $this->schedule_model->delete($_POST);
