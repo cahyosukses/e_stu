@@ -418,6 +418,38 @@ class student_model extends CI_Model {
         return $array;
     }
 	
+	function get_rank($param = array()) {
+		$param['default_value'] = false;
+		$array = $this->student_model->get_grade($param);
+		if (count($array) == 0) {
+			return array();
+		}
+		
+		// set key array student
+		$array_student = array();
+		foreach ($array as $key => $row) {
+			$array_student[$row['id']] = $row;
+		}
+		
+		// array sorting
+		$array_sorting = array();
+		foreach ($array_student as $key => $row) {
+			$array_sorting[$row['id']] = $row['rank_score'];
+		}
+		arsort($array_sorting);
+		
+		// set ranking
+		$number = 0;
+		$result = array();
+		foreach ($array_sorting as $student_id => $row) {
+			$number++;
+			$array_student[$student_id]['rank_no'] = $number;
+			$result[] = $array_student[$student_id];
+		}
+		
+		return $result;
+	}
+	
     function delete($param) {
 		$delete_query  = "DELETE FROM ".STUDENT." WHERE s_id = '".$param['s_id']."' LIMIT 1";
 		$delete_result = mysql_query($delete_query) or die(mysql_error());
@@ -676,6 +708,12 @@ class student_model extends CI_Model {
 			. 'Tareekh '.$row['tareekh_attendance']."%";
 		if ($row['class_level_id'] >= 5) {
 			$row['attendance_label'] .= "\nAqaid ".$row['aqaid_attendance'].'%';
+		}
+		
+		// rank
+		$row['rank_score'] = $row['quran_summary'] + $row['figh_summary'] + $row['akhlaq_summary'] + $row['tareekh_summary'];
+		if (isset($row['aqaid_summary'])) {
+			$row['rank_score'] += $row['aqaid_summary'];
 		}
 		
 		// datatable

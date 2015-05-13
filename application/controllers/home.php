@@ -395,6 +395,8 @@ class home extends SE_Controller {
 		$result = array( 'status' => false );
 		if ($action == 'weekly_checklist') {
 			$this->load->view( 'home_weekly_checklist' );
+		} else if ($action == 'class_ranking') {
+			$this->load->view( 'class_ranking' );
 		}
 	}
 	
