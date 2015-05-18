@@ -11,7 +11,7 @@
 			<th class="center">Fiqh</th>
 			<th class="center">Akhlaq</th>
 			<th class="center">Tareekh</th>
-			<th class="center">Aqaid</th>
+			<th class="center">Attendance</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -23,7 +23,7 @@
 			<td class="center"><?php echo $row['figh_summary']; ?></td>
 			<td class="center"><?php echo $row['akhlaq_summary']; ?></td>
 			<td class="center"><?php echo $row['tareekh_summary']; ?></td>
-			<td class="center"><?php echo (isset($row['aqaid_summary'])) ? $row['aqaid_summary'] : '-'; ?></td>
+			<td class="center"><?php echo $row['attendance_summary']; ?></td>
 		</tr>
 		<?php } ?>
 	</tbody>

@@ -711,10 +711,7 @@ class student_model extends CI_Model {
 		}
 		
 		// rank
-		$row['rank_score'] = $row['quran_summary'] + $row['figh_summary'] + $row['akhlaq_summary'] + $row['tareekh_summary'];
-		if (isset($row['aqaid_summary'])) {
-			$row['rank_score'] += $row['aqaid_summary'];
-		}
+		$row['rank_score'] = $row['quran_summary'] + $row['figh_summary'] + $row['akhlaq_summary'] + $row['tareekh_summary'] + $row['attendance_summary'];
 		
 		// datatable
 		if (count(@$param['column']) > 0) {
