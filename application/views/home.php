@@ -2,6 +2,7 @@
 	// get user
 	$user = $this->user_model->get_session();
 	$class_level = $this->class_level_model->get_array();
+	$quran_level = $this->quran_level_model->get_array();
 	
 	// get teacher class type
 	$user_class_type = array( 1, 2, 3, 4, 5 );
@@ -574,6 +575,7 @@
 							<li><a href="#tab-attendance" data-toggle="tab">Attendance Tracker</a></li>
 							<li><a href="#tab-tardy-tracker" data-toggle="tab">Tardy Tracker</a></li>
 							<li><a href="#tab-class-ranking" data-toggle="tab">Class Ranking</a></li>
+							<li><a href="#tab-quran-ranking" data-toggle="tab">Quran Ranking</a></li>
 						</ul>
 						<div class="tab-content box-wide box-no-bottom-padding">
 							<div class="tab-pane fade in widget-comments active" id="tab-comments">
@@ -715,21 +717,21 @@
 									</div>
 								</div>
 								
-								<div class="cnt-ranking-table"></div>
-								<!--
-								<table class="table table-bordered" id="tab-tardy-table">
-									<thead>
-										<tr>
-											<th>Date</th>
-											<th>Student</th>
-											<th>Reason</th>
-											<th>Total Tardies</th>
-											<th>Control</th>
-										</tr>
-									</thead>
-									<tbody></tbody>
-								</table>
-								-->
+								<div class="cnt-class-ranking"></div>
+							</div>
+							<div class="tab-pane fade widget-threads" id="tab-quran-ranking" style="padding: 10px 0 10px 0;">
+								<div class="cnt-filter">
+									<div class="row-fluid">
+										<div style="padding: 6px 0 0 0;" class="span3 filter-title">Quran Level :</div>
+										<div class="span2">
+											<select name="quran_level_id" style="width: 100%;">
+												<?php echo ShowOption(array( 'Array' => $quran_level, 'ArrayTitle' => 'name' )); ?>
+											</select>
+										</div>
+									</div>
+								</div>
+								
+								<div class="cnt-quran-ranking"></div>
 							</div>
 						</div>
 					</div>
@@ -1427,14 +1429,10 @@ $(document).ready(function () {
 						param: { action: 'get_user' },
 						url: web.base + 'home/action',
 						callback: function(result) {
-							if (typeof(result.p_sign_image_link) != 'undefined' && result.p_sign_image_link != '') {
-								// show modal
-								$('#modal-weekly-check form')[0].reset();
-								Func.populate({ cnt: '#modal-weekly-check', record: record });
-								$('#modal-weekly-check').modal();
-							} else {
-								$.notify("Please enter signature before continue.", "error");
-							}
+							// show modal
+							$('#modal-weekly-check form')[0].reset();
+							Func.populate({ cnt: '#modal-weekly-check', record: record });
+							$('#modal-weekly-check').modal();
 						}
 					});
 				});
@@ -1766,19 +1764,37 @@ $(document).ready(function () {
 	
 	// class ranking
 	$('#tab-class-ranking [name="class_level_id"]').change(function() {
-		$('#tab-class-ranking .cnt-ranking-table').html('<div style="text-align: center;"><img src="' + web.base + 'static/images/loading.gif" style="width: 25px;" /></div>');
+		$('#tab-class-ranking .cnt-class-ranking').html('<div style="text-align: center;"><img src="' + web.base + 'static/images/loading.gif" style="width: 25px;" /></div>');
 		var class_level_id = $('#tab-class-ranking [name="class_level_id"]').val();
 		if (class_level_id != '') {
 			Func.ajax({
 				param: { action: 'class_ranking', class_level_id: class_level_id },
 				url: web.base + 'home/view', is_json: false,
 				callback: function(result) {
-					$('#tab-class-ranking .cnt-ranking-table').html(result);
+					$('#tab-class-ranking .cnt-class-ranking').html(result);
 					$('#tab-class-ranking table').dataTable();
 				}
 			});
 		} else {
-			$('#tab-class-ranking .cnt-ranking-table').html('');
+			$('#tab-class-ranking .cnt-class-ranking').html('');
+		}
+	});
+	
+	// quran ranking
+	$('#tab-quran-ranking [name="quran_level_id"]').change(function() {
+		$('#tab-quran-ranking .cnt-quran-ranking').html('<div style="text-align: center;"><img src="' + web.base + 'static/images/loading.gif" style="width: 25px;" /></div>');
+		var quran_level_id = $('#tab-quran-ranking [name="quran_level_id"]').val();
+		if (quran_level_id != '') {
+			Func.ajax({
+				param: { action: 'quran_ranking', quran_level_id: quran_level_id },
+				url: web.base + 'home/view', is_json: false,
+				callback: function(result) {
+					$('#tab-quran-ranking .cnt-quran-ranking').html(result);
+					$('#tab-quran-ranking table').dataTable();
+				}
+			});
+		} else {
+			$('#tab-quran-ranking .cnt-quran-ranking').html('');
 		}
 	});
 	

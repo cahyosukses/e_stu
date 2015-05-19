@@ -397,6 +397,8 @@ class home extends SE_Controller {
 			$this->load->view( 'home_weekly_checklist' );
 		} else if ($action == 'class_ranking') {
 			$this->load->view( 'class_ranking' );
+		} else if ($action == 'quran_ranking') {
+			$this->load->view( 'quran_ranking' );
 		}
 	}
 	

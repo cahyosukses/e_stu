@@ -418,7 +418,39 @@ class student_model extends CI_Model {
         return $array;
     }
 	
-	function get_rank($param = array()) {
+	function get_quran_rank($param = array()) {
+		$param['default_value'] = false;
+		$array = $this->student_model->get_grade($param);
+		if (count($array) == 0) {
+			return array();
+		}
+		
+		// set key array student
+		$array_student = array();
+		foreach ($array as $key => $row) {
+			$array_student[$row['id']] = $row;
+		}
+		
+		// array sorting
+		$array_sorting = array();
+		foreach ($array_student as $key => $row) {
+			$array_sorting[$row['id']] = $row['quran_summary'];
+		}
+		arsort($array_sorting);
+		
+		// set ranking
+		$number = 0;
+		$result = array();
+		foreach ($array_sorting as $student_id => $row) {
+			$number++;
+			$array_student[$student_id]['rank_no'] = $number;
+			$result[] = $array_student[$student_id];
+		}
+		
+		return $result;
+	}
+	
+	function get_class_rank($param = array()) {
 		$param['default_value'] = false;
 		$array = $this->student_model->get_grade($param);
 		if (count($array) == 0) {
@@ -711,8 +743,8 @@ class student_model extends CI_Model {
 		}
 		
 		// rank
-		$row['rank_score'] = $row['quran_summary'] + $row['figh_summary'] + $row['akhlaq_summary'] + $row['tareekh_summary'] + $row['attendance_summary'];
-		$row['rank_subject'] = 5;
+		$row['rank_score'] = $row['figh_summary'] + $row['akhlaq_summary'] + $row['tareekh_summary'] + $row['attendance_summary'];
+		$row['rank_subject'] = 4;
 		if (isset($row['aqaid_summary'])) {
 			$row['rank_subject']++;
 			$row['rank_score'] += $row['aqaid_summary'];
