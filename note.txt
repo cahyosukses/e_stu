@@ -1,8 +1,49 @@
-I think the pagination on the schedule list for administrator is broken,
-I cant click on next page
-- ok sorry, i am update about subject student and it's dont support with current paging
-btw it's already fix now
+Hey there,
 
-Can you add a print button that basically generates a PDF of all the timeslots per teacher,
-so for example one page is for a specific teacher
-- ok done
+I have another request
+
+The school year is ending and we need to start registering for the new
+year.
+
+The first step for that is to give the parents the option to re-register
+their child for next year.
+
+What is needed:
+A modal that pops up when the parent logs on to the dashboard that says:
+
+Jafaria Sunday School has completed its first successful year. Please pick
+an option below to indicate if you intend to register you child for next
+year.
+
+The options will be:
+I do wish to register my child for next year
+I do not wish to register my child next year
+Remind me Later
+
+If they click on Yes - Register My Child another window pops up with a
+dropdown of the names of their children. If they have more than one, there
+is an additional option that says all my children.
+
+Once they choose the child, they also have a checkbox where it says I have
+read and Agree to the terms and conditions specified in the student
+handbook.
+
+The student handbook word will be linked to the pdf of the student handbook
+
+Once they check the box and click submit, they should get a message saying.
+Thanks for registering your child for the 2015-2016 school year
+
+We would need a new db table that will store all the registrations for next
+year
+Also on the administrator dashboard - We could replace the Handbook section
+with the New Registration section
+
+The table will have the following columns
+Student Name
+Father Name
+Mother Name
+Signed Handbook Agreement
+Fees Paid - Yes/No
+Date Registered
+
+Let me know if there are any questions
