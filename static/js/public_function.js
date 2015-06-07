@@ -511,6 +511,44 @@ $(document).ready(function() {
 		});
 	});
 	
+	// form contact detail
+	$('.btn-contact-detail').click(function() {
+		Func.ajax({ url: web.base + 'home/action', param: { action: 'get_user' }, callback: function(result) {
+			Func.populate({ cnt: '#modal-update-contact', record: result });
+			$('#modal-update-contact').modal();
+		} });
+	});
+	$('#modal-update-contact form').validate({
+		rules: {
+			p_phone: { required: true },
+			p_address: { required: true },
+			p_father_email: { email: true },
+			p_mother_email: { email: true }
+		}
+	});
+	$('#modal-update-contact form').submit(function(e) {
+		e.preventDefault();
+		if (! $('#modal-update-contact form').valid()) {
+			return false;
+		}
+		
+		// ajax request
+		var param = Func.form.get_value('modal-update-contact');
+		Func.form.submit({
+			url: web.base + 'home/action',
+			param: param,
+			callback: function(result) {
+				$('#modal-update-contact').modal('hide');
+				$('#modal-update-contact form')[0].reset();
+				
+				// check callback
+				if (Func.callback != null) {
+					Func.callback();
+				}
+			}
+		});
+	});
+	
 	// reset task & attendance
 	$('.btn-reset-task').click(function() {
 		Func.form.confirm_delete({

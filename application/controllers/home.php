@@ -113,6 +113,9 @@ class home extends SE_Controller {
 				}
 			}
 		}
+		else if ($action == 'update_contact') {
+			$result = $this->parents_model->update($_POST);
+		}
 		else if ($action == 'forget_password') {
 			// user
 			$user = $this->user_model->get_by_id(array( 'user_email' => $_POST['email'] ));
@@ -153,6 +156,116 @@ class home extends SE_Controller {
 		}
 		else if ($action == 'reset_attendance') {
 			$result = $this->attendance_model->delete(array( 'truncate' => true ));
+		}
+		else if ($action == 'update_register') {
+			// array student
+			$array_student = $this->register_model->get_non_register(array( 'parent_id' => $_POST['parent_id'] ));
+			if (count($array_student) == 0) {
+				$result['message'] = 'No student left.';
+				echo json_encode($result);
+				exit;
+			}
+			
+			// option value
+			if ($_POST['opt_value'] == 1) {
+				ini_set("memory_limit", "256M");
+				$this->load->library('mpdf');
+				
+				// get user
+				$user = $this->user_model->get_session();
+				
+				// collect student
+				$array_student_update = array();
+				if ($_POST['student_id'] == 'all') {
+					foreach ($array_student as $row) {
+						$param = array(
+							'student_id' => $row['s_id'],
+							'due_date' => $this->config->item('current_datetime'),
+							'status' => 'register'
+						);
+						$array_student_update[] = $param;
+					}
+				} else {
+					$param = array(
+						'student_id' => $_POST['student_id'],
+						'due_date' => $this->config->item('current_datetime'),
+						'status' => 'register'
+					);
+					$array_student_update[] = $param;
+				}
+				
+				// update student
+				$array_to = $array_sub = array();
+				foreach ($array_student_update as $param) {
+					$student = $this->student_model->get_by_id(array( 's_id' => $param['student_id'] ));
+					
+					// generate pdf
+					@mkdir($this->config->item('base_path').'/static/upload/'.date("Y/"));
+					@mkdir($this->config->item('base_path').'/static/upload/'.date("Y/m"));
+					@mkdir($this->config->item('base_path').'/static/upload/'.date("Y/m/d"));
+					$pdf_name = date("Y/m/d/YmdHis_").rand(1000,9998).'.pdf';
+					$pdf_path = $this->config->item('base_path').'/static/upload/'.$pdf_name;
+					$template = $this->load->view( 'home_handbook_agreement', array( 'string_student' => $student['s_name'], 'text_signature' => $user['user_display'] ), true );
+					$this->mpdf->WriteHTML($template);
+					$this->mpdf->Output($pdf_path, 'F');
+					
+					// update db
+					$param['handbook'] = $pdf_name;
+					$result = $this->register_model->update($param);
+					
+					// email parent
+					if (!empty($user['p_father_email'])) {
+						$array_to[] = array(
+							'name' => $user['p_father_name'],
+							'email' => strtolower($user['p_father_email'])
+						);
+						$array_sub['-name_of_student-'][] = $student['s_name'];
+					}
+					if (!empty($user['p_mother_email'])) {
+						$array_to[] = array(
+							'name' => $user['p_mother_name'],
+							'email' => strtolower($user['p_mother_email'])
+						);
+						$array_sub['-name_of_student-'][] = $student['s_name'];
+					}
+				}
+				
+				// sent mail
+				$register_success_email = $this->config_model->get_by_id(array( 'config_key' => 'register-success-email' ));
+				$param_mail = array(
+					'full_body_message' => true,
+					'user_email' => 'school@jafaria.org',
+					'user_display' => 'JEC BOARD',
+					'array_to' => $array_to,
+					'array_sub' => $array_sub,
+					'subject' => 'Registration Reminder',
+					'content' => $register_success_email['config_value'],
+					'title' => 'Administrator'
+				);
+				$this->mail_model->sent_grid($param_mail);
+				
+				// set message
+				$result['message'] = 'Thanks for registering your child for the 2015-2016 school year';
+			}
+			else if ($_POST['opt_value'] == 2) {
+				// insert unregister
+				foreach ($array_student as $row) {
+					$param = array(
+						'student_id' => $row['s_id'],
+						'due_date' => $this->config->item('current_datetime'),
+						'status' => 'unregister'
+					);
+					$result = $this->register_model->update($param);
+				}
+			}
+			else {
+				$result['message'] = 'Option value is not available.';
+				echo json_encode($result);
+				exit;
+			}
+		}
+		else if ($action == 'update_register_row') {
+			$result = $this->register_model->update($_POST);
 		}
 		else if ($action == 'update_signature') {
 			ini_set("memory_limit", "256M");
@@ -367,6 +480,55 @@ class home extends SE_Controller {
 		else if ($action == 'handbook_delete') {
 			$result = $this->handbook_model->delete($_POST);
 		}
+		else if ($action == 'register_notification') {
+			// get user
+			$user = $this->user_model->get_session();
+			$user_type = $this->user_type_model->get_by_id(array( 'id' => $user['user_type_id'] ));
+			
+			// array register
+			$param_parent = array( 'limit' => 500 );
+			if (!empty($_POST['parent_id'])) {
+				$param_parent['parent_id'] = $_POST['parent_id'];
+			}
+			if (!empty($_POST['limit'])) {
+				$param_parent['limit'] = $_POST['limit'];
+			}
+			$array_parent = $this->register_model->get_non_register($param_parent);
+			
+			// collect email
+			$array_to = array();
+			foreach ($array_parent as $row) {
+				if (!empty($row['father_email'])) {
+					$array_to[] = array(
+						'name' => $row['father_name'],
+						'email' => $row['father_email']
+					);
+				}
+				if (!empty($row['mother_email'])) {
+					$array_to[] = array(
+						'name' => $row['mother_name'],
+						'email' => $row['mother_email']
+					);
+				}
+			}
+			
+			// email content
+			$register_notification_email = $this->config_model->get_by_id(array( 'config_key' => 'register-notification-email' ));
+			
+			// sent grid
+			$param_mail = array(
+				'user_email' => $user['user_email'],
+				'user_display' => $user['user_display'],
+				'array_to' => $array_to,
+				'subject' => 'Registration Reminder',
+				'content' => $register_notification_email['config_value'],
+				'title' => $user_type['title']
+			);
+			$this->mail_model->sent_grid($param_mail);
+			
+            $result['status'] = true;
+            $result['message'] = count($array_to).' notification has been sent.';
+		}
 		else if ($action == 'get_attendance_message') {
 			$result = $this->attendance_student_model->get_recap_student($_POST);
 		}
@@ -413,6 +575,16 @@ class home extends SE_Controller {
 			$_POST['column'] = array( 'due_date_swap', 'student_name', 'reason', 'total_tardy' );
 			$array = $this->tardy_model->get_array($_POST);
 			$count = $this->tardy_model->get_count();
+		} else if ($grid_type == 'register_student') {
+			$_POST['column'] = array( 'student_name', 'father_name', 'mother_name', 'paid_text', 'due_date_text' );
+			$_POST['grid_type'] = 'register_grid';
+			$array = $this->register_model->get_array($_POST);
+			$count = $this->register_model->get_count();
+		} else if ($grid_type == 'unregister_student') {
+			$_POST['column'] = array( 'student_name', 'father_name', 'father_email', 'mother_name' );
+			$_POST['is_custom'] = '<span class="cursor-font-awesome icon-envelope btn-mail" title="Document"></span>';
+			$array = $this->register_model->get_non_register($_POST);
+			$count = $this->register_model->get_count();
 		}
 		
 		$grid = array( 'sEcho' => $_POST['sEcho'], 'aaData' => $array, 'iTotalRecords' => $count, 'iTotalDisplayRecords' => $count );

@@ -70,14 +70,11 @@
 	);
 	$array_calendar = $this->calendar_model->get_array($param_calendar);
 	
-	// handbook data for administrator / principal
-	if (in_array($user['user_type_id'], array(USER_TYPE_PRINCIPAL, USER_TYPE_ADMINISTRATOR))) { 
-		$array_handbook_complete = $this->handbook_model->get_array(array( 'limit' => 500 ));
-		$array_handbook_uncomplete = $this->handbook_model->get_array_uncomplete(array( 'limit' => 500 ));
-	}
-	
 	// parent only
 	if ($user['user_type_id'] == USER_TYPE_PARENT) {
+		// registration
+		$student_registration = $this->register_model->get_non_register(array( 'parent_id' => $user['p_id'] ));
+		
 		// document
 		$array_document = $this->task_model->get_array_document(array( 'student_id' => $user['student_id'] ));
 		
@@ -134,7 +131,7 @@
 	/* modal */
 	.modal-header .close { width: auto; line-height: inherit; }
 	.controls input, .controls span.add-on { height: 30px; }
-	#modal-update-password .modal-footer input { margin-top: 0px; float: inherit; }
+	#modal-update-password .modal-footer input, #modal-update-contact .modal-footer input { margin-top: 0px; float: inherit; }
 	
 	/* modal weekly checklisk */
 	#modal-weekly-check .control-label { width: 150px; }
@@ -434,6 +431,54 @@
 		</form>
 	</div>
 	
+	<?php if (isset($student_registration) && count($student_registration) > 0) { ?>
+	<div id="modal-registration" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modal-registration" aria-hidden="true">
+		<form class="form-horizontal" style="margin: 0px;">
+			<input type="hidden" name="action" value="update_register" />
+			<input type="hidden" name="parent_id" value="<?php echo $user['p_id']; ?>" />
+			
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>2015-2016 Registration</h3>
+			</div>
+			<div class="modal-body">
+				<div>Jafaria Sunday School has completed its first successful year. Please pick an option below to indicate if you intend to register you child for next year.</div>
+				<div style="padding: 8px 0 0 0;">
+					<ul>
+						<li style="padding: 1px 0;"><label><input type="radio" name="opt_value" value="1" style="margin: 0 0 4px 0;" /> I do wish to register my child for next year</label></li>
+						<li style="padding: 1px 0;"><label><input type="radio" name="opt_value" value="2" style="margin: 0 0 4px 0;" /> I do not wish to register my child next year</label></li>
+						<li style="padding: 1px 0;"><label><input type="radio" name="opt_value" value="3" style="margin: 0 0 4px 0;" /> Remind me Later</label></li>
+					</ul>
+				</div>
+				<div class="control-group input-child hide">
+					<label class="control-label">Student</label>
+					<div class="controls">
+						<select name="student_id" style="margin-bottom: 0px;">
+							<?php echo ShowOption(array( 'Array' => $student_registration, 'ArrayID' => 's_id','ArrayTitle' => 's_name' )); ?>
+							<?php if (count($student_registration) > 1) { ?>
+							<option value="all">All my children</option>
+							<?php } ?>
+						</select>
+					</div>
+				</div>
+				<div class="input-child hide" style="padding: 8px 0;">
+					<label><input type="checkbox" name="contact" value="1" style="margin: 0 0 4px 0;" /> I have correct <a class="cursor btn-contact-detail">contact details</a>.</label>
+					<label><input type="checkbox" name="agree" value="1" style="margin: 0 0 4px 0;" /> I have read and Agree to the terms and conditions specified in <a href="<?php echo base_url('static/document/handbook.pdf'); ?>" target="_blank">the student handbook</a>.</label>
+				</div>
+				<div>
+					<hr />
+					<h3>2014-2015 Survey</h3>
+					<div>Thank you for all your help in making the 2014-2015 school year a success, please take a few minutes to let us know how we did by clicking <a href="http://www.jafariaschool.org/survey.html" target="_blank">here</a></div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="button" class="btn" data-dismiss="modal" value="Close" style="float: right;" />
+				<input type="submit" class="btn btn-primary" value="Submit" style="margin-top: 7px; margin-right: 10px;" />
+			</div>
+		</form>
+	</div>
+	<?php } ?>
+	
 	<section class="container">
 		<?php if (count($student) > 0) { ?>
 		<?php $student_label = $student['s_name']; ?>
@@ -456,6 +501,7 @@
 		</div></div></div>
 		<?php } ?>
 		
+		<?php if (count($student_grade) > 0) { ?>
 		<section class="row-fluid">
 			<div class="well widget-pie-charts">
 				<h3 class="box-header">Grades</h3>
@@ -504,6 +550,7 @@
 				</div>
 			</div>
 		</section>
+		<?php } ?>
 		
 		<?php if ($user['user_type_id'] == USER_TYPE_PARENT) { ?>
 			<?php if (count($array_handbook) == 0) { ?>
@@ -848,7 +895,7 @@
 		
 		<?php if (in_array($user['user_type_id'], array(USER_TYPE_PRINCIPAL, USER_TYPE_ADMINISTRATOR))) { ?>
 		<section class="row-fluid" id="grid-handbook">
-			<h3 class="box-header"><i class="icon-envelope" style="color: #cd522c"></i> Handbook</h3>
+			<h3 class="box-header"><i class="icon-envelope" style="color: #cd522c"></i> 2015-2016 Registration</h3>
 			<div class="box">
 				<div class="tabbable">
 					<ul class="nav nav-tabs box-wide">
@@ -858,58 +905,34 @@
 					<div class="tab-content box-wide box-no-bottom-padding">
 						<div class="tab-pane fade in widget-comments active" id="tab-handbook-done"><div style="padding: 20px; min-height: 200px;">
 							<div class="dataTables_wrapper"><div class="cnt-table" style="background: #FFFFFF;">
-								<table class="table table-bordered">
+								<table class="table table-bordered" id="grid-register">
 									<thead>
 										<tr>
-											<th style="width: 30%;" class="center">Father Name</th>
-											<th style="width: 30%;" class="center column-small">Mother Name</th>
-											<th style="width: 20%;" class="center column-small">Date Completed</th>
-											<th style="width: 20%;" class="center">Control</th>
+											<th style="width: 20%;">Student Name</th>
+											<th style="width: 15%;">Father Name</th>
+											<th style="width: 15%;">Mother Name</th>
+											<th style="width: 10%;">Fees Paid</th>
+											<th style="width: 15%;">Date Registered</th>
+											<th style="width: 10%;">Control</th>
 										</tr>
 									</thead>
-									<tbody>
-										<?php foreach ($array_handbook_complete as $row) { ?>
-										<tr>
-											<td><?php echo $row['father_name']; ?></td>
-											<td class="column-small"><?php echo $row['mother_name']; ?></td>
-											<td class="center column-small"><?php echo $row['due_date_swap']; ?></td>
-											<td class="center">
-												<span class="cursor-font-awesome icon-link btn-document" title="Document"></span>
-												<span class="cursor-font-awesome icon-trash btn-delete" title="Delete"></span>
-												<span class="hide"><?php echo json_encode($row); ?></span>
-											</td>
-										</tr>
-										<?php } ?>
-									</tbody>
+									<tbody></tbody>
 								</table>
 							</div></div>
 						</div></div>
 						<div class="tab-pane fade widget-threads" id="tab-handbook-undone"><div style="padding: 20px; min-height: 200px;">
 							<div class="dataTables_wrapper"><div class="cnt-table" style="background: #FFFFFF;">
-								<table class="table table-bordered">
+								<table class="table table-bordered" id="grid-unregister">
 									<thead>
 										<tr>
-											<th style="width: 20%;" class="center">Father Name</th>
-											<th style="width: 20%;" class="center column-small">Father Email</th>
-											<th style="width: 20%;" class="center column-small">Father Cell</th>
-											<th style="width: 20%;" class="center column-small">Mother Name</th>
-											<th style="width: 20%;" class="center">Control</th>
+											<th style="width: 20%;">Student Name</th>
+											<th style="width: 20%;">Father Name</th>
+											<th style="width: 20%;">Father Email</th>
+											<th style="width: 20%;">Mother Name</th>
+											<th style="width: 20%;">Control</th>
 										</tr>
 									</thead>
-									<tbody>
-										<?php foreach ($array_handbook_uncomplete as $row) { ?>
-										<tr>
-											<td><?php echo $row['father_name']; ?></td>
-											<td class="column-small"><?php echo $row['father_email']; ?></td>
-											<td class="center column-small"><?php echo $row['father_cell']; ?></td>
-											<td class="column-small"><?php echo $row['mother_name']; ?></td>
-											<td class="center">
-												<span class="cursor-font-awesome icon-envelope btn-single-handbook" title="Sent Notification"></span>
-												<span class="hide"><?php echo json_encode($row); ?></span>
-											</td>
-										</tr>
-										<?php } ?>
-									</tbody>
+									<tbody></tbody>
 								</table>
 							</div></div>
 						</div></div>
@@ -1315,61 +1338,102 @@ $(document).ready(function () {
 	// form handbook
 	if ($('#grid-handbook').length > 0) {
 		// complete
-		$('#tab-handbook-done table').dataTable();
-		$('#tab-handbook-done table .cursor-font-awesome').tooltip({ placement: 'top' });
-		$('#tab-handbook-done .btn-document').click(function() {
-			var raw_record = $(this).siblings('.hide').text();
-			eval('var record = ' + raw_record);
-			window.open(record.link_document);
-		});
-		$('#tab-handbook-done .btn-delete').click(function() {
-			var button = $(this);
-			var raw_record = $(this).siblings('.hide').text();
-			eval('var record = ' + raw_record);
-			
-			Func.form.confirm_delete({
-				data: { action: 'handbook_delete', id: record.id },
-				url: web.base + 'home/action', callback: function() { button.parents('tr').remove(); }
-			});
-		});
+		var complete_param = {
+			id: 'grid-register',
+			source: 'home/grid', aaSorting: [[ 0, "ASC" ]],
+			column: [ { }, { sClass: 'column-small' }, { sClass: 'column-small' }, { bSortable: false, sClass: 'center column-small' }, { sClass: 'center column-small' }, { bSortable: false, sClass: 'center' } ],
+			fnServerParams: function(aoData) {
+				aoData.push(
+					{ name: 'grid_type', value: 'register_student' }
+				);
+			},
+			callback: function() {
+				$('#grid-register .btn-document').click(function() {
+					var raw_record = $(this).siblings('.hide').text();
+					eval('var record = ' + raw_record);
+					window.open(record.handbook_link);
+				});
+				
+				$('#grid-register .btn-paid').click(function() {
+					var raw_record = $(this).siblings('.hide').text();
+					eval('var record = ' + raw_record);
+					
+					Func.form.submit({
+						url: web.base + 'home/action',
+						param: { action: 'update_register_row', id: record.id, is_paid: 1 },
+						callback: function(result) {
+							complete_dt.reload();
+						}
+					});
+				});
+				
+				$('#grid-register .btn-unpaid').click(function() {
+					var raw_record = $(this).siblings('.hide').text();
+					eval('var record = ' + raw_record);
+					
+					Func.form.submit({
+						url: web.base + 'home/action',
+						param: { action: 'update_register_row', id: record.id, is_paid: 0 },
+						callback: function(result) {
+							complete_dt.reload();
+						}
+					});
+				});
+			}
+		}
+		var complete_dt = Func.datatable(complete_param);
 		
 		// uncomplete
-		$('#tab-handbook-undone table').dataTable();
-		$('#tab-handbook-undone table .cursor-font-awesome').tooltip({ placement: 'top' });
-		$('#tab-handbook-undone .dataTables_length').prepend(
-			'<div style="float: left; padding: 0 5px 0 0;">' +
-				'<div class="btn-group open">' +
-					'<button data-toggle="dropdown" class="btn btn-notofication dropdown-toggle" style="margin: 0px;">Send Notification <span class="caret"></span></button>' +
-					'<ul class="dropdown-menu">' +
-						'<li><a class="cursor btn-request-handbook">All Parents</a></li>' +
-						'<li><a class="cursor btn-request-handbook" data-limit="10">First 10 Parents</a></li>' +
-					'</ul>' +
-				'</div>' +
-			'</div>'
-		);
+		var uncomplete_param = {
+			id: 'grid-unregister',
+			source: 'home/grid', aaSorting: [[ 0, "ASC" ]],
+			column: [ { }, { sClass: 'column-small' }, { sClass: 'column-small' }, { sClass: 'column-small' }, { bSortable: false, sClass: 'center' } ],
+			init: function() {
+				$('#grid-unregister_length').prepend(
+					'<div style="float: left; padding: 0 5px 0 0;">' +
+						'<div class="btn-group open">' +
+							'<button data-toggle="dropdown" class="btn btn-notification dropdown-toggle" style="margin: 0px;">Send Notification <span class="caret"></span></button>' +
+							'<ul class="dropdown-menu">' +
+								'<li><a class="cursor btn-request-handbook">All Parents</a></li>' +
+								'<li><a class="cursor btn-request-handbook" data-limit="10">First 10 Parents</a></li>' +
+							'</ul>' +
+						'</div>' +
+					'</div>'
+				);
+			},
+			fnServerParams: function(aoData) {
+				aoData.push(
+					{ name: 'grid_type', value: 'unregister_student' }
+				);
+			},
+			callback: function() {
+				
+				$('#grid-unregister .btn-mail').click(function() {
+					var raw_record = $(this).siblings('.hide').text();
+					eval('var record = ' + raw_record);
+					
+					Func.form.submit({
+						url: web.base + 'home/action',
+						param: { action: 'register_notification', parent_id: record.parent_id }
+					});
+				});
+			}
+		}
+		var uncomplete_dt = Func.datatable(uncomplete_param);
 		$('#tab-handbook-undone .btn-request-handbook').click(function() {
 			var limit = $(this).data('limit');
-			var param = { action: 'handbook_notification' };
+			var param = { action: 'register_notification' };
 			if (typeof(limit) == 'number') {
 				param.limit = limit;
 			}
 			
-			$('#grid-handbook .btn-notofication').attr('disabled', true);
+			$('#grid-handbook .btn-notification').attr('disabled', true);
 			Func.form.submit({
 				url: web.base + 'home/action',
 				param: param,
 				callback: function(result) {
-					$('#grid-handbook .btn-notofication').attr('disabled', false);
+					$('#grid-handbook .btn-notification').attr('disabled', false);
 				}
-			});
-		});
-		$('#tab-handbook-undone .btn-single-handbook').click(function() {
-			var raw_record = $(this).siblings('.hide').text();
-			eval('var record = ' + raw_record);
-			
-			Func.form.submit({
-				url: web.base + 'home/action',
-				param: { action: 'handbook_notification', parent_id: record.parent_id }
 			});
 		});
 	}
@@ -1761,6 +1825,63 @@ $(document).ready(function () {
 			}
 		});
 	});
+	
+	// registration
+	if ($('#modal-registration').length > 0) {
+		$('#modal-registration').modal();
+		
+		// form
+		$('#modal-registration [name="opt_value"]').click(function() {
+			var param = Func.form.get_value('modal-registration');
+			if (param.opt_value == 1) {
+				$('#modal-registration .input-child').show();
+			} else {
+				$('#modal-registration .input-child').hide();
+			}
+		});
+		$('#modal-registration .btn-contact-detail').click(function() {
+			$('#modal-registration').modal('hide');
+			
+			// set callback
+			Func.callback = function() {
+				$('#modal-registration').modal();
+				delete Func.callback;
+			}
+		});
+		$('#modal-registration form').submit(function(e) {
+			e.preventDefault();
+			var param = Func.form.get_value('modal-registration');
+			if (param.opt_value == null) {
+				$.notify("Please select your option", "error");
+				return false;
+			} else if (param.opt_value == 1) {
+				if (param.student_id == '') {
+					$.notify("Please select children", "error");
+					return false;
+				} else if (param.contact == 0) {
+					$.notify("Please check contact details", "error");
+					return false;
+				} else if (param.agree == 0) {
+					$.notify("Please check our aggrement", "error");
+					return false;
+				}
+			} else if (param.opt_value == 3) {
+				$('#modal-registration').modal('hide');
+				return false;
+			}
+			
+			// ajax request
+			$('#modal-registration [type="submit"]').attr('disabled', true);
+			Func.form.submit({
+				url: web.base + 'home/action',
+				param: param,
+				callback: function(result) {
+					$('#modal-registration').modal('hide');
+					$('#modal-registration [type="submit"]').attr('disabled', false);
+				}
+			});
+		});
+	}
 	
 	// class ranking
 	$('#tab-class-ranking [name="class_level_id"]').change(function() {

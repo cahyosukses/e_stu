@@ -81,6 +81,9 @@
 							<?php } ?>
 							
 							<li class="divider"></li>
+							<?php if ($user['user_type_id'] == USER_TYPE_PARENT) { ?>
+							<li><a class="cursor btn-contact-detail">Contact Details</a></li>
+							<?php } ?>
 							<li><a class="cursor btn-update-password">Change Password</a></li>
 							<li><a href="<?php echo base_url('home/logout'); ?>">Sign Out</a></li>
 						</ul>

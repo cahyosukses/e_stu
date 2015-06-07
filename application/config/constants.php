@@ -61,6 +61,7 @@ define('MAIL',									'mail');
 define('PARENT',								'parents');
 define('PARENTS',								'parents');
 define('QURAN_LEVEL',							'quran_level');
+define('REGISTER',								'register');
 define('SMS',									'sms');
 define('STUDENT',								'students');
 define('SCHEDULE',								'schedule');
