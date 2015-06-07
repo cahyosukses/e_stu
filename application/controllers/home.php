@@ -220,6 +220,7 @@ class home extends SE_Controller {
 							'email' => strtolower($user['p_father_email'])
 						);
 						$array_sub['-name_of_student-'][] = $student['s_name'];
+						$array_sub['-signed_handbook_attachment-'][] = '<a href="'.base_url('static/upload/'.$pdf_name).'">Signed handbook Attachment</a>';
 					}
 					if (!empty($user['p_mother_email'])) {
 						$array_to[] = array(
@@ -227,6 +228,7 @@ class home extends SE_Controller {
 							'email' => strtolower($user['p_mother_email'])
 						);
 						$array_sub['-name_of_student-'][] = $student['s_name'];
+						$array_sub['-signed_handbook_attachment-'][] = '<a href="'.base_url('static/upload/'.$pdf_name).'">Signed handbook Attachment</a>';
 					}
 				}
 				
@@ -544,6 +546,89 @@ class home extends SE_Controller {
 			if ($user_session['user_type_id'] == USER_TYPE_PARENT) {
 				$result = $this->parents_model->get_by_id(array( 'p_id' => $user_session['p_id'] ));
 			}
+		}
+		else if ($action == 'inject_register') {
+			ini_set("memory_limit", "256M");
+			$this->load->library('mpdf');
+			
+			// update parent
+			$parent_param = object_to_array(json_decode($_POST['parent_json']));
+			$parent_result = $this->parents_model->update($parent_param);
+			
+			// update student
+			$student_result = array();
+			$array_student = object_to_array(json_decode($_POST['student_json']));
+			foreach ($array_student as $student_param) {
+				$student_param['s_parent_id'] = $parent_result['id'];
+				$student_result[] = $this->student_model->update($student_param);
+			}
+			
+			// update student
+			$array_to = $array_sub = $array_file = array();
+			foreach ($student_result as $student_id) {
+				$student = $this->student_model->get_by_id(array( 's_id' => $student_id['id'] ));
+				
+				// generate pdf
+				$_POST['full_name'] = $student['father_name'];
+				@mkdir($this->config->item('base_path').'/static/upload/'.date("Y/"));
+				@mkdir($this->config->item('base_path').'/static/upload/'.date("Y/m"));
+				@mkdir($this->config->item('base_path').'/static/upload/'.date("Y/m/d"));
+				$pdf_name = date("Y/m/d/YmdHis_").rand(1000,9998).'.pdf';
+				$pdf_path = $this->config->item('base_path').'/static/upload/'.$pdf_name;
+				$template = $this->load->view( 'home_handbook_agreement', array( 'student_id' => $student['s_id'], 'string_student' => $student['s_name'], 'text_signature' => $student['father_name'] ), true );
+				$mpdf = new mPDF();
+				$mpdf->WriteHTML($template);
+				$mpdf->Output($pdf_path, 'F');
+				unset($mpdf);
+				
+				// update db
+				$param_register = array(
+					'handbook' => $pdf_name,
+					'student_id' => $student['s_id'],
+					'due_date' => $this->config->item('current_datetime'),
+					'status' => 'register'
+				);
+				$result_register = $this->register_model->update($param_register);
+				
+				// email parent
+				if (!empty($student['father_email'])) {
+					$array_to[] = array(
+						'name' => $student['father_name'],
+						'email' => strtolower($student['father_email'])
+					);
+					$array_sub['-name_of_student-'][] = $student['s_name'];
+					$array_sub['-signed_handbook_attachment-'][] = '<a href="'.base_url('static/upload/'.$pdf_name).'">Signed handbook Attachment</a>';
+				}
+				if (!empty($student['mother_email'])) {
+					$array_to[] = array(
+						'name' => $student['mother_name'],
+						'email' => strtolower($student['mother_email'])
+					);
+					$array_sub['-name_of_student-'][] = $student['s_name'];
+					$array_sub['-signed_handbook_attachment-'][] = '<a href="'.base_url('static/upload/'.$pdf_name).'">Signed handbook Attachment</a>';
+				}
+				
+				// set array file
+				$array_file[] = array( 'name' => $student['s_name'], 'handbook' => base_url('static/upload/'.$pdf_name) );
+			}
+			
+			// sent mail
+			$register_success = $this->config_model->get_by_id(array( 'config_key' => 'register-success-new-student' ));
+			$param_mail = array(
+				'full_body_message' => true,
+				'user_email' => 'school@jafaria.org',
+				'user_display' => 'JEC BOARD',
+				'array_to' => $array_to,
+				'array_sub' => $array_sub,
+				'subject' => 'Registration Reminder',
+				'content' => $register_success['config_value'],
+				'title' => 'Administrator'
+			);
+			$this->mail_model->sent_grid($param_mail);
+			
+			// set status
+			$result['status'] = true;
+			$result['array_file'] = $array_file;
 		}
 		
 		echo json_encode($result);

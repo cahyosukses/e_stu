@@ -11,7 +11,7 @@
 	}
 	
 	// student
-	$student = $this->student_model->get_by_id(array( 's_id' => $user['student_id'] ));
+	$student = $this->student_model->get_by_id(array( 's_id' => (!empty($user['student_id'])) ? $user['student_id'] : $student_id ));
 	
 	// signature
 	$text_signature = (isset($text_signature)) ? $text_signature : '';

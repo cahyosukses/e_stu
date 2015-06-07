@@ -6,7 +6,7 @@ class student_model extends CI_Model {
 		
         $this->field = array(
 			's_id', 's_parent_id', 's_status', 's_gender', 's_previous', 's_age', 's_last_level', 's_quran_level', 's_dob', 's_name',
-			'quran_level_id', 'class_level_id', 'comment_good', 'comment_bad'
+			'quran_level_id', 'class_level_id'
 		);
     }
 
