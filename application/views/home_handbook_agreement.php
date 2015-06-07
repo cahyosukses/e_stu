@@ -1,16 +1,25 @@
 <?php
 	// get user
-	$string_student = '';
 	$user = $this->user_model->get_session();
-	foreach ($user['array_student'] as $key => $row) {
-		$string_student .= (empty($string_student)) ? $row['s_name'] : ', '.$row['s_name'];
+	
+	// string student
+	$string_student = (isset($string_student)) ? $string_student : '';
+	if (empty($string_student)) {
+		foreach ($user['array_student'] as $key => $row) {
+			$string_student .= (empty($string_student)) ? $row['s_name'] : ', '.$row['s_name'];
+		}
 	}
 	
 	// student
 	$student = $this->student_model->get_by_id(array( 's_id' => $user['student_id'] ));
 	
 	// signature
-	$text_signature = (!empty($_POST['text_signature'])) ? $_POST['text_signature'] : '-';
+	$text_signature = (isset($text_signature)) ? $text_signature : '';
+	$text_signature = (!empty($_POST['text_signature'])) ? $_POST['text_signature'] : $text_signature;
+	$text_signature = (empty($text_signature)) ? '-' : $text_signature;
+	
+	// default data
+	$_POST['full_name'] = (empty($_POST['full_name'])) ? $user['user_display'] : $_POST['full_name'];
 ?>
 
 <style>
