@@ -38,6 +38,9 @@ year
 Also on the administrator dashboard - We could replace the Handbook section
 with the New Registration section
 
+
+
+
 The table will have the following columns
 Student Name
 Father Name
