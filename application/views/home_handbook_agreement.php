@@ -76,7 +76,7 @@
 }
 .paragraph {
 	font-size: 15px;
-	line-height: 25px;
+	line-height: 20px;
 }
 .paragraph .line {
 	padding: 0 0 20px 0;
@@ -313,7 +313,7 @@
 			<div class="line">I agree, for myself, my heirs, executors and administrators not to sue and to release indemnify, defend and hold harmless Jafaria Islamic Society, its affiliates, its board members, Sunday School Principal, Administration, volunteers, any other associated personnel, and all sponsoring businesses and organizations and their agents and employees, from and against any and all liability, claims, expenses or penalties (including attorney’s fees), demands and causes of action whatsoever, arising out of or brought in connection with my child’s participation to Sunday School, events and/or related activities – whether resulting from the negligence or carelessness of any of the above or from any other cause. </div>
 			<div class="line">Furthermore, I authorize the use of publication of my child’s name, image or voice as may be captured by photograph or recording while participating in the school or events in any medium for any purpose, including illustration, promotion, communication, advertisement, posted on social media and/or school website. The copyright(s) in such photograph, recording, illustration, promotion or advertisement or other material shall be owned by Jafaria Islamic Society. We may use text message to contact and communicate with the family. Jafaria Islamic Society doesn’t pay or be responsible for any charges that may be incurred by you. </div>
 		</div>
-		<div style="float: right; width: 40%; text-align: center; font-size: 16px; display: none;">
+		<div style="float: right; width: 40%; text-align: center; font-size: 16px;">
 			<div style="padding: 60px 0 0 0;"><?php echo date("F d, Y"); ?></div>
 			
 			<?php if (!empty($link_signature)) { ?>
